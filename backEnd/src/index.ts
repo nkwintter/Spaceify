@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import * as dotenv from 'dotenv';
-import { GenerateTracks } from './AI.service';
+import { generateTracks } from './AI.service';
 
 dotenv.config();
 const app = express();
@@ -14,15 +14,16 @@ app.post('/generate-playlist', async (req: Request, res: Response) => {
   }
 
   try {
-    const tracks = await GenerateTracks(mood, imageTitle);
+    const tracks = await generateTracks(mood, imageTitle);
     res.json(tracks);
   } catch (error) {
     res.status(500).json({ error: 'Erro ao gerar playlist' });
   }
 });
 
+app.get('/', (req, res) => res.send("Spaceify Gemini API OK"));
+
 const PORT = 3001;
 app.listen(PORT, () => {
-  console.log(`Server: http://localhost:${PORT}`);
+  console.log(`Server rodando em: http://localhost:${PORT}`);
 });
-
