@@ -14,30 +14,25 @@ const SpotifyCallback = () => {
       });
     }
 
-    // Se esta janela foi aberta como popup
     if (window.opener) {
       if (params.access_token) {
-        // Enviar sucesso para a janela pai
         window.opener.postMessage({
           type: 'spotify-auth-success',
           params: params
         }, window.location.origin);
       } else if (params.error) {
-        // Enviar erro para a janela pai
         window.opener.postMessage({
           type: 'spotify-auth-error',
           error: params.error
         }, window.location.origin);
       }
-      
-      // Fechar popup
+          
       window.close();
     } else {
-      // Se não é popup, redirecionar para home com o token
       if (params.access_token) {
         // Salvar token no localStorage
         localStorage.setItem('@spotify_token', params.access_token);
-        // Redirecionar para home
+        // Redirecionar para home LEMBRAR DE TROCAR PARA  O LINK DA NOSSA HOME
         window.location.href = '/';
       }
     }

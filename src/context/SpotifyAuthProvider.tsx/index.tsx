@@ -112,7 +112,6 @@ export const SpotifyAuthProvider = ({ children }: { children: React.ReactNode })
           setToken(access_token);
           await AsyncStorage.setItem('@spotify_token', access_token);
 
-          // Buscar dados do usuário
           const userResponse = await fetch('https://api.spotify.com/v1/me', {
             headers: { Authorization: `Bearer ${access_token}` },
           });
