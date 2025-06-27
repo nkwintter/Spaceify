@@ -1,9 +1,8 @@
-// SpotifyCallback.jsx
 import { useEffect } from 'react';
 
 const SpotifyCallback = () => {
   useEffect(() => {
-    // Extrair parâmetros da URL (hash fragment)
+    // Extrair parametros da URL 
     const hash = window.location.hash.substring(1);
     const params = {};
     
@@ -38,6 +37,8 @@ const SpotifyCallback = () => {
     }
   }, []);
 
+
+//Praticidade  e estava dando erro no import desse styles
   return (
     <div style={{ 
       display: 'flex', 
