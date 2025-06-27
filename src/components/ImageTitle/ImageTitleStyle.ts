@@ -2,22 +2,22 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   nomeImagem: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 22,
+    fontWeight: '600',
     color: '#FFFFFF',
-    marginBottom: 15,
-    textAlign: 'center',
-    letterSpacing: 0.3,
-    lineHeight: 32,
+    marginBottom: 12,
   },
   descricao: {
     fontSize: 16,
-    color: '#B8C5D6',
-    lineHeight: 24,
-    textAlign: 'justify',
-    marginBottom: 30,
-    paddingHorizontal: 10,
-    fontWeight: '400',
-    letterSpacing: 0.2,
+    color: '#DADADA',
+    lineHeight: 22,
+  },
+  verMaisBtn: {
+    marginTop: 10,
+    alignSelf: 'flex-end',
+  },
+  verMaisTexto: {
+    color: '#7FB3FF',
+    fontSize: 14,
   },
 });

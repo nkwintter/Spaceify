@@ -1,5 +1,19 @@
-import axios from "axios";
+import axios from 'axios';
 
-// CHAVE PÚBLICA. PODE SUBSTITUIR
-const API_KEY = 'DEMO_KEY';
+const API_KEY = 'DEMO_KEY'; // Ou sua chave da NASA
 const BASE_URL = 'https://api.nasa.gov';
+
+export async function fetchApod(date?: string) {
+  try {
+    const response = await axios.get(`${BASE_URL}/planetary/apod`, {
+      params: {
+        api_key: API_KEY,
+        date,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar APOD:', error);
+    throw error;
+  }
+}

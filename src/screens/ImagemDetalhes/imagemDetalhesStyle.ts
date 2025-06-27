@@ -1,22 +1,26 @@
 import { StyleSheet } from 'react-native';
 
-export const styles = StyleSheet.create({
-  container: {
+export const localStyles = StyleSheet.create({
+  safeArea: {
     flex: 1,
     backgroundColor: '#0A0E27',
+  },
+  scrollContent: {
     paddingHorizontal: 20,
-    paddingTop: 50,
-    paddingBottom: 30,
+    paddingBottom: 40,
+    paddingTop: 30,
   },
   titulo: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 30,
-    letterSpacing: 0.5,
-    textShadowColor: 'rgba(127, 179, 255, 0.3)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+    marginBottom: 24,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#0A0E27',
   },
 });
