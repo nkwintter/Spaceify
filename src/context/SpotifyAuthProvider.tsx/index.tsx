@@ -65,7 +65,7 @@ export const SpotifyAuthProvider = ({ children }: { children: React.ReactNode })
       setToken(authState.accessToken);
       await AsyncStorage.setItem('@spotify_token', authState.accessToken);
 
-      const response = await fetch('https://api.spotify.com/v1/me', {
+      const response = await fetch('https://api.spotify.com/v1/me', {//conferir
         headers: { Authorization: `Bearer ${authState.accessToken}` },
       });
 
@@ -84,7 +84,7 @@ export const SpotifyAuthProvider = ({ children }: { children: React.ReactNode })
       await AsyncStorage.removeItem('@spotify_token');
       await AsyncStorage.removeItem('@spotify_user');
     } catch (err) {
-      console.error('Erro ao deslogar:', err);
+      console.error('Erro ao efetuar o logout:', err);
     }
   };
 

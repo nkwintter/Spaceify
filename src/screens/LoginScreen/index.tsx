@@ -4,7 +4,7 @@ import * as AuthSession from 'expo-auth-session';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles.js';
 
-const CLIENT_ID = 'SEU_CLIENT_ID'; // substitua pelo seu
+const CLIENT_ID = '31a4444d5e0542a69db4049886453097'; // PEGAR O CLIENTE ID
 
 const discovery = {
   authorizationEndpoint: 'https://accounts.spotify.com/authorize',
