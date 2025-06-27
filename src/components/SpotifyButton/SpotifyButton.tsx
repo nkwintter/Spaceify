@@ -1,13 +1,20 @@
 import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { styles } from './SpotifyButtonStyle';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SpotifyButton() {
+  const handlePress = () => {
+    // Lógica para abrir playlist do Spotify (em breve)
+    console.log('Abrir Spotify 🎵');
+  };
+
   return (
-    <TouchableOpacity style={styles.botaoSpotify}>
-      <Ionicons name="musical-notes" size={20} color="#fff" />
-      <Text style={styles.textoBotao}>Ouvir no Spotify</Text>
+    <TouchableOpacity onPress={handlePress} style={styles.button} activeOpacity={0.8}>
+      <View style={styles.content}>
+        <Ionicons name="musical-notes" size={22} color="#000" style={styles.icon} />
+        <Text style={styles.text}>Ouvir playlist no Spotify </Text>
+      </View>
     </TouchableOpacity>
   );
 }

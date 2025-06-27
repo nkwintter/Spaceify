@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ImagemDetalhes from './src/screens/ImagemDetalhes/imagemDetalhes';
 
 export default function App() {
@@ -11,8 +11,8 @@ export default function App() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <ImagemDetalhes data={imagemMock} />
-    </View>
+    <SafeAreaProvider>
+          <ImagemDetalhes />
+    </SafeAreaProvider>
   );
 }

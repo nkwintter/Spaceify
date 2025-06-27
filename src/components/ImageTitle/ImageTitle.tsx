@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, LayoutAnimation, Platform, UIManager } from 'react-native';
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  LayoutAnimation,
+  Platform,
+  UIManager,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { styles } from './ImageTitleStyle';
-import { Ionicons } from '@expo/vector-icons';
 
-if (Platform.OS === 'android') {
-  UIManager.setLayoutAnimationEnabledExperimental?.(true);
-}
 
 type Props = {
   title: string;
@@ -21,8 +25,13 @@ export default function ImageTitle({ title, description }: Props) {
   };
 
   return (
-    <View>
-      <Text style={styles.nomeImagem}>🌠 {title}</Text>
+    <LinearGradient
+      colors={['#2a2d5a', '#1b1c3a']}
+      style={styles.card}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+    >
+      <Text style={styles.nomeImagem}>🌌 {title}</Text>
 
       <Text
         style={styles.descricao}
@@ -36,6 +45,6 @@ export default function ImageTitle({ title, description }: Props) {
           {expanded ? 'Ver menos ▲' : 'Ver mais ▼'}
         </Text>
       </TouchableOpacity>
-    </View>
+    </LinearGradient>
   );
 }

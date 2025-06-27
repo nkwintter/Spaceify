@@ -2,22 +2,25 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   favoritoBtn: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
     borderRadius: 25,
     borderWidth: 2,
-    borderColor: 'rgba(255, 215, 0, 0.3)',
-    shadowColor: '#FFD700',
+    borderColor: 'rgba(0, 0, 0, 0.2)',
+  },
+  favoritoAtivo: {
+    backgroundColor: '#FF4D6D',
+    borderColor: '#FF4D6D',
   },
   textoFavorito: {
-    color: '#FFFFFF',
+    color: '#FFF',
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '600',
     marginLeft: 12,
-    letterSpacing: 0.3,
+    letterSpacing: 0.5,
   },
 });

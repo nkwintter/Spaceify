@@ -1,11 +1,18 @@
 import React from 'react';
-import { Image } from 'react-native';
+import { Image, View } from 'react-native';
 import { styles } from './ImageViewerStyle';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
-type Props = {
+interface Props {
   url: string;
-};
+}
 
 export default function ImageViewer({ url }: Props) {
-  return <Image source={{ uri: url }} style={styles.imagem} resizeMode="cover" />;
+  return (
+    <Animated.View entering={FadeIn.duration(700)}>
+      <View style={styles.container}>
+        <Image source={{ uri: url }} style={styles.image} resizeMode="cover" />
+      </View>
+    </Animated.View>
+  );
 }
