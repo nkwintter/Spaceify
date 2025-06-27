@@ -6,20 +6,32 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "dev": "ts-node-dev src/index.ts",
+    "build": "tsc"
+
+
   },
   "dependencies": {
     "axios": "^1.10.0",
     "dotenv": "^16.6.0",
     "expo": "~53.0.12",
     "expo-status-bar": "~2.2.3",
+    "express": "^5.1.0",
     "react": "19.0.0",
     "react-native": "0.79.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.4",
     "@types/react": "~19.0.10",
+    "ts-node-dev": "^2.0.0",
     "typescript": "~5.8.3"
   },
-  "private": true
+  "private": true,
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }

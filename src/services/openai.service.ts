@@ -11,7 +11,7 @@ interface SongData{
 }
 
 
-export async function name({mood, imageTitle}:trackProps): Promise<Track[]> {
+export async function name({mood, imageTitle}:Track): Promise<SongData[]> {
     const prompt = `
         Você é um curador musical. 
         Para o mood "${mood}" inspirado na imagem "${imageTitle}", 
@@ -35,7 +35,7 @@ export async function name({mood, imageTitle}:trackProps): Promise<Track[]> {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${process.env.Open}`,
+                    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
                     "Content-Type": "application/json",
                 },
             }
@@ -43,7 +43,7 @@ export async function name({mood, imageTitle}:trackProps): Promise<Track[]> {
 
         const raw = response.data.choices[0].message.content;
 
-        const parsed: Track[] = JSON.parse(raw)
+        const parsed: SongData[] = JSON.parse(raw)
         return parsed;
 
     } catch (error) {
