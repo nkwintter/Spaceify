@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { authorize, refresh, AuthConfiguration } from 'react-native-app-auth';
+import * as AuthSession from 'expo-auth-session';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface SpotifyAuthContextType {
@@ -21,21 +21,21 @@ export const useSpotifyAuth = () => {
   return context;
 };
 
-const config: AuthConfiguration = {
-  clientId: '31a4444d5e0542a69db4049886453097',//CONFERIR CLIENTE ID 31a4444d5e0542a69db4049886453097
-  redirectUrl: 'com.spaceify://oauthredirect', // CONFERIR  A URL'S 
-  scopes: ['user-read-email', 'user-read-private', 'playlist-read-private'],
-  serviceConfiguration: {
-    authorizationEndpoint: 'https://accounts.spotify.com/authorize',
-    tokenEndpoint: 'https://accounts.spotify.com/api/token',
-  },
-};
-
-
 export const SpotifyAuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Configuração do AuthSession
+  const discovery = {
+    authorizationEndpoint: 'https://accounts.spotify.com/authorize',
+    tokenEndpoint: 'https://accounts.spotify.com/api/token',
+  };
+
+  const redirectUri = AuthSession.makeRedirectUri({
+    scheme: 'spaceify', // Nome do seu app
+    path: 'redirect'
+  });
 
   useEffect(() => {
     loadFromStorage();
@@ -48,50 +48,122 @@ export const SpotifyAuthProvider = ({ children }: { children: React.ReactNode })
 
       if (storedToken) {
         setToken(storedToken);
+        // Verificar se o token ainda é válido
+        await validateToken(storedToken);
       }
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
     } catch (error) {
-      console.error('Erro ao carregar o Token: ' + error);
+      console.error('Erro ao carregar dados do storage:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const login = async () => {
+  const validateToken = async (accessToken: string) => {
     try {
-      const authState = await authorize(config);
-      setToken(authState.accessToken);
-      await AsyncStorage.setItem('@spotify_token', authState.accessToken);
-
-      const response = await fetch('https://api.spotify.com/v1/me', {//conferir
-        headers: { Authorization: `Bearer ${authState.accessToken}` },
+      const response = await fetch('https://api.spotify.com/v1/me', {
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      const userData = await response.json();
-      setUser(userData);
-      await AsyncStorage.setItem('@spotify_user', JSON.stringify(userData));
-    } catch (err) {
-      console.error('Erro ao logar com Spotify:', err);
+      if (response.status === 401) {
+        // Token expirado
+        await logout();
+        return false;
+      }
+
+      return response.ok;
+    } catch (error) {
+      console.error('Erro ao validar token:', error);
+      return false;
+    }
+  };
+
+  const login = async () => {
+    try {
+      setIsLoading(true);
+
+      const request = new AuthSession.AuthRequest({
+        clientId: '31a4444d5e0542a69db4049886453097',
+        scopes: [
+          'user-read-email',
+          'user-read-private',
+          'playlist-read-private',
+          'playlist-read-collaborative',
+          'user-library-read',
+          'user-top-read'
+        ],
+        usePKCE: false,
+        responseType: AuthSession.ResponseType.Token,
+        redirectUri: redirectUri,
+      });
+
+      console.log('Redirect URI:', redirectUri);
+
+      const result = await request.promptAsync(discovery);
+
+      console.log('Auth result:', result);
+
+      if (result.type === 'success') {
+        const { access_token } = result.params;
+
+        if (access_token) {
+          setToken(access_token);
+          await AsyncStorage.setItem('@spotify_token', access_token);
+
+          // Buscar dados do usuário
+          const userResponse = await fetch('https://api.spotify.com/v1/me', {
+            headers: { Authorization: `Bearer ${access_token}` },
+          });
+
+          if (userResponse.ok) {
+            const userData = await userResponse.json();
+            setUser(userData);
+            await AsyncStorage.setItem('@spotify_user', JSON.stringify(userData));
+            console.log('Login realizado com sucesso:', userData.display_name);
+          } else {
+            console.error('Erro ao buscar dados do usuário:', userResponse.status);
+          }
+        }
+      } else if (result.type === 'error') {
+        console.error(' Erro na autenticação:', result.error);
+      } else {
+        console.log(' Login cancelado pelo usuário');
+      }
+    } catch (error) {
+      console.error(' Erro durante o login:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const logout = async () => {
     try {
+      setIsLoading(true);
       setToken(null);
       setUser(null);
       await AsyncStorage.removeItem('@spotify_token');
       await AsyncStorage.removeItem('@spotify_user');
-    } catch (err) {
-      console.error('Erro ao efetuar o logout:', err);
+      console.log(' Logout realizado com sucesso');
+    } catch (error) {
+      console.error(' Erro durante o logout:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const value = {
+    token,
+    user,
+    isLoading,
+    isAuthenticated: !!token,
+    login,
+    logout
+  };
+
   return (
-    <SpotifyAuthContext.Provider
-      value={{ token, user, isLoading, isAuthenticated: !!token, login, logout }}
-    >
+    <SpotifyAuthContext.Provider value={value}>
       {children}
     </SpotifyAuthContext.Provider>
   );
