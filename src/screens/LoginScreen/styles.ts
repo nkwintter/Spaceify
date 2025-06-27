@@ -3,54 +3,59 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0D0D1F',
+    backgroundColor: '#0e0b22',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
-  image: {
+
+  astronaut: {
     width: 120,
     height: 120,
     marginBottom: 20,
-    resizeMode: 'contain',
   },
+
   title: {
-    fontSize: 36,
-    color: '#FFFFFF',
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 40,
     fontFamily: 'monospace',
-    marginBottom: 30,
     letterSpacing: 2,
   },
+
   card: {
-    backgroundColor: '#1B1B3A',
-    padding: 30,
+    backgroundColor: '#1c1b38',
+    width: '100%',
     borderRadius: 20,
     alignItems: 'center',
-    width: '100%',
-    maxWidth: 320,
+    paddingVertical: 30,
+    paddingHorizontal: 20,
   },
-  logo: {
+
+  spotifyLogo: {
     width: 80,
     height: 80,
-    marginBottom: 20,
-    resizeMode: 'contain',
+    marginBottom: 15,
   },
-  text: {
-    color: '#D0D0D0',
+
+  cardText: {
+    color: '#fff',
     fontSize: 14,
     marginBottom: 20,
   },
+
   button: {
-    backgroundColor: '#7A4FFF',
+    backgroundColor: '#704DFF',
     paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 30,
-    width: '100%',
-    alignItems: 'center',
+    paddingHorizontal: 40,
+    borderRadius: 25,
   },
+
   buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
+    color: '#fff',
     fontWeight: 'bold',
+    fontSize: 14,
+    textTransform: 'uppercase',
   },
 });
