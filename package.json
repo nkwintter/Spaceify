@@ -9,8 +9,6 @@
     "web": "expo start --web",
     "dev": "ts-node-dev src/index.ts",
     "build": "tsc"
-
-
   },
   "dependencies": {
     "axios": "^1.10.0",
@@ -19,7 +17,8 @@
     "expo-status-bar": "~2.2.3",
     "express": "^5.1.0",
     "react": "19.0.0",
-    "react-native": "0.79.4"
+    "react-native": "0.79.4",
+    "expo-linear-gradient": "~14.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

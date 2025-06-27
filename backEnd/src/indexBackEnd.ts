@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import * as dotenv from 'dotenv';
-import { generateTracks } from './AI.service';
+import { generateTracks } from './AI.BackEnd';
 
 dotenv.config();
 const app = express();
