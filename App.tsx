@@ -9,12 +9,13 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    function App() {
-      return (
-        <SpotifyAuthProvider>
-          <LoginScreen />
-        </SpotifyAuthProvider>
-      );
-    }
+    <SpotifyAuthProvider>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SpotifyAuthProvider>
   );
 }
