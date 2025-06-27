@@ -1,17 +1,14 @@
 import axios from "axios";
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 interface Track{
-    mood: string;
-    imageTitle: string;
-}
-
-interface SongData{
     title: string;
     artitst: string;
 }
 
 
-export async function name({mood, imageTitle}:Track): Promise<SongData[]> {
+export async function GenerateTracks(mood: string, imageTitle: string): Promise<Track[]> {
     const prompt = `
         Você é um curador musical. 
         Para o mood "${mood}" inspirado na imagem "${imageTitle}", 
@@ -35,7 +32,7 @@ export async function name({mood, imageTitle}:Track): Promise<SongData[]> {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+                    Authorization: `Bearer ${process.env.GEMINI_API_KEY}`,
                     "Content-Type": "application/json",
                 },
             }
@@ -43,7 +40,7 @@ export async function name({mood, imageTitle}:Track): Promise<SongData[]> {
 
         const raw = response.data.choices[0].message.content;
 
-        const parsed: SongData[] = JSON.parse(raw)
+        const parsed: Track[] = JSON.parse(raw)
         return parsed;
 
     } catch (error) {

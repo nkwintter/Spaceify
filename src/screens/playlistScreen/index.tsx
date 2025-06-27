@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { Text, View, FlatList } from 'react-native';
 import { playlistStyles } from './styles';
 import { CardPlaylist } from '../../components/cardPlaylist';
 

@@ -1,13 +1,6 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "target": "es6",
-    "module": "es2015",
-    "rootDir": "src",
-    "outDir": "dist",
-    "esModuleInterop": true,
-    "strict": true,
+    "strict": true
   }
-
-  
 }
