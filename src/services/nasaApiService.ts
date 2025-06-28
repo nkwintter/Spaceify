@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_KEY = 'DEMO_KEY'; // troque pela sua chave da NASA se quiser
+const API_KEY = '8umLRwthz2JKTgLeKE018FzZzOgjcOarnhxmgoFL'; 
 const BASE_URL = 'https://api.nasa.gov';
 
 export async function fetchApod(date?: string) {
@@ -9,6 +9,7 @@ export async function fetchApod(date?: string) {
       params: {
         api_key: API_KEY,
         date,
+        thumbs: true,
       },
     });
     return response.data;

@@ -1,42 +1,51 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Text,
-  View,
   ScrollView,
   StatusBar,
+  Text,
+  View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import ImageViewer from '../../components/ImageViewer/ImageViewer';
-import ImageTitle from '../../components/ImageTitle/ImageTitle';
-import SpotifyButton from '../../components/SpotifyButton/SpotifyButton';
-import FavoriteButton from '../../components/FavoriteButton/favoriteButton';
-import { ImageData } from '../../types/types';
+import AnimatedReanimated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+import FavoriteButton from '../../components/FavoriteButton/favoriteButton';
+import ImageTitle from '../../components/ImageTitle/ImageTitle';
+import ImageViewer from '../../components/ImageViewer/ImageViewer';
+import SpotifyButton from '../../components/SpotifyButton/SpotifyButton';
+
+import AnimatedHeader from '../../components/AnimateHeader/AnimateHeader';
 import { fetchApod } from '../../services/nasaApiService';
+import { ImageData } from '../../types/types';
 import { localStyles } from './imagemDetalhesStyle';
-import { LinearGradient } from 'expo-linear-gradient';
-import Animated, { FadeIn } from 'react-native-reanimated';
+
 
 export default function ImagemDetalhes() {
   const [data, setData] = useState<ImageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [favorito, setFavorito] = useState(false);
+  // const [favorito, setFavorito] = useState(false);
 
   useEffect(() => {
     async function getApod() {
       try {
         const apodData = await fetchApod();
 
-        if (apodData.media_type !== 'image') {
-          setError('Conteúdo da NASA não é uma imagem');
-        } else {
+        if (apodData.media_type === 'image') {
           setData({
             url: apodData.hdurl || apodData.url,
             title: apodData.title,
             explanation: apodData.explanation,
           });
+        } else if (apodData.media_type === 'video' && apodData.thumbnail_url) {
+          setData({
+            url: apodData.thumbnail_url,
+            title: apodData.title,
+            explanation: apodData.explanation,
+          });
+        } else {
+          setError('Conteúdo da NASA não é uma imagem');
         }
       } catch {
         setError('Erro ao carregar dados da NASA.');
@@ -48,13 +57,13 @@ export default function ImagemDetalhes() {
     getApod();
   }, []);
 
-  const toggleFavorito = () => setFavorito(!favorito);
-
   if (loading)
     return (
-      <LinearGradient colors={['#1b1c3a', '#0a0e23']} style={localStyles.gradient}>
+      <LinearGradient
+        colors={['#0B0B22', '#18002C']} style={localStyles.gradient}
+      >
         <SafeAreaView style={localStyles.safeArea}>
-          <StatusBar backgroundColor="#0a0e23" />
+          <StatusBar backgroundColor="#0D1B2A" barStyle="light-content" />
           <View style={localStyles.centered}>
             <ActivityIndicator size="large" color="#7FB3FF" />
           </View>
@@ -66,7 +75,7 @@ export default function ImagemDetalhes() {
     return (
       <LinearGradient colors={['#1b1c3a', '#0a0e23']} style={localStyles.gradient}>
         <SafeAreaView style={localStyles.safeArea}>
-          <StatusBar backgroundColor="#0a0e23" />
+          <StatusBar backgroundColor="#0D1B2A" barStyle="light-content" />
           <View style={localStyles.centered}>
             <Text style={localStyles.errorText}>🚀 {error}</Text>
           </View>
@@ -77,25 +86,42 @@ export default function ImagemDetalhes() {
   if (!data) return null;
 
   return (
-    <LinearGradient colors={['#1b1c3a', '#0a0e23']} style={localStyles.gradient}>
+    <LinearGradient
+      colors={['#0B0B22', '#18002C']} style={localStyles.gradient}
+    >
       <SafeAreaView style={localStyles.safeArea}>
-        <StatusBar backgroundColor="#0a0e23" barStyle="light-content" />
+        <StatusBar backgroundColor="#0D1B2A" barStyle="light-content" />
 
         <ScrollView contentContainerStyle={localStyles.scrollContent}>
-          <Text style={localStyles.titulo}>
-            <Ionicons name="planet" size={26} color="#94DAFF" /> Detalhes da Imagem 
-          </Text>
+          <AnimatedReanimated.View entering={FadeIn.duration(700)}>
+            <AnimatedHeader />
+          </AnimatedReanimated.View>
 
-          <Animated.View entering={FadeIn.duration(700)}>
+          <AnimatedReanimated.View entering={FadeIn.duration(700)}>
             <ImageViewer url={data.url} />
-          </Animated.View>
+          </AnimatedReanimated.View>
 
-          <Animated.View entering={FadeIn.delay(300).duration(700)}>
+          <AnimatedReanimated.View entering={FadeIn.delay(800).duration(700)}>
+            <Text style={{
+              color: '#B0C4DE',
+              fontSize: 16,
+              fontWeight: '600',
+              textAlign: 'center',
+              marginVertical: 12,
+              textShadowColor: 'rgba(0,0,0,0.5)',
+              textShadowOffset: { width: 0, height: 1 },
+              textShadowRadius: 4,
+            }}>
+              Aqui está a descrição da imagem escolhida
+            </Text>
+          </AnimatedReanimated.View>
+
+          <AnimatedReanimated.View entering={FadeIn.delay(1200).duration(700)}>
             <ImageTitle title={data.title} description={data.explanation} />
-          </Animated.View>
+          </AnimatedReanimated.View>
 
           <SpotifyButton />
-          <FavoriteButton/>
+          <FavoriteButton />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

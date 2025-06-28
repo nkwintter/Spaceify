@@ -11,13 +11,6 @@ export const localStyles = StyleSheet.create({
     padding: 20,
     paddingBottom: 40,
   },
-  titulo: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#B7B1F2',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
   centered: {
     flex: 1,
     justifyContent: 'center',
@@ -27,4 +20,5 @@ export const localStyles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+  
 });
