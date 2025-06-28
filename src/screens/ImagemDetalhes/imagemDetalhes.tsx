@@ -19,6 +19,7 @@ import AnimatedHeader from '../../components/AnimateHeader/AnimateHeader';
 import { fetchApod } from '../../services/nasaApiService';
 import { ImageData } from '../../types/types';
 import { localStyles } from './imagemDetalhesStyle';
+import ButtonBackCateg from '../../components/ButtonBackCateg/ButtonBackCateg';
 
 
 export default function ImagemDetalhes() {
@@ -96,7 +97,7 @@ export default function ImagemDetalhes() {
           <AnimatedReanimated.View entering={FadeIn.duration(700)}>
             <AnimatedHeader />
           </AnimatedReanimated.View>
-
+           
           <AnimatedReanimated.View entering={FadeIn.duration(700)}>
             <ImageViewer url={data.url} />
           </AnimatedReanimated.View>
@@ -119,6 +120,9 @@ export default function ImagemDetalhes() {
           <AnimatedReanimated.View entering={FadeIn.delay(1200).duration(700)}>
             <ImageTitle title={data.title} description={data.explanation} />
           </AnimatedReanimated.View>
+                    <AnimatedReanimated.View entering={FadeIn.delay(300).duration(600)}>
+  <ButtonBackCateg />
+</AnimatedReanimated.View>
 
           <SpotifyButton />
           <FavoriteButton />
