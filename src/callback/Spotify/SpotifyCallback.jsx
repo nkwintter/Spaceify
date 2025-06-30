@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+//Essa  classe faz o redirecionamento do usuário/cliente para de volta ao Home dps que foi feita a autorização de  Login pelo Spotify
+
 const SpotifyCallback = () => {
   useEffect(() => {
     // Extrair parametros da URL 
