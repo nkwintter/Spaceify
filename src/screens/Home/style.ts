@@ -1,16 +1,14 @@
 import { StyleSheet } from 'react-native';
 
-export default StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0B0B22',
     paddingHorizontal: 16,
-    paddingTop: 40,
   },
   title: {
-    fontSize: 16,
+    fontSize: 24,
     color: '#FFFFFF',
-    marginBottom: 12,
+    marginBottom: 8,
     fontWeight: 'bold',
   },
   imageContainer: {
@@ -18,7 +16,7 @@ export default StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 380,
+    height: 375,
     borderRadius: 12,
   },
   imagePorCima: {
@@ -27,6 +25,7 @@ export default StyleSheet.create({
     width: '100%',
     backgroundColor: 'rgba(0,0,0,0.3)', // opcional, destaca o texto
     padding: 12,
+    borderRadius: 12,
   },
   imageTitle: {
     marginTop: 8,
@@ -36,7 +35,7 @@ export default StyleSheet.create({
   },
   imageDate: {
     fontSize: 12,
-    color: '#AAAAAA',
+    color: '#ccc',
     marginBottom: 4,
   },
   imageDescription: {
@@ -83,13 +82,13 @@ export default StyleSheet.create({
   favoritesTitle: {
     fontSize: 14,
     color: '#D0D0D0',
-    marginBottom: 8,
+    marginBottom: 20,
   },
   favoritesScroll: {
     marginBottom: 16,
   },
   favoriteCard: {
-    marginRight: 8,
+    marginRight: 20,
     alignItems: 'center',
     width: 80,
   },
@@ -100,7 +99,41 @@ export default StyleSheet.create({
     marginBottom: 4,
   },
   favoriteText: {
-    fontSize: 12,
-    color: '#FFFFFF',
+    fontSize: 10,
+    color: '#fff',
+    textAlign: 'center',
+    
   },
+   gradient: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  seeMore: {
+    color: '#7FB3FF',
+    textAlign: 'left',
+    marginTop: 4,
+  },
+  fadeGradient: {
+    position: 'absolute',
+    bottom: 30, // ajusta conforme o espaço
+    left: 0,
+    right: 0,
+    height: 50, // altura do fade
+  }
+    
 });
