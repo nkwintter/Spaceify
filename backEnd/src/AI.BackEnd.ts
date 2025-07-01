@@ -10,7 +10,7 @@ export async function generateTracks(mood: string, imageTitle: string) {
   const prompt = `
         Você é um curador musical. 
         Para o humor "${mood}" inspirado na imagem de nome"${imageTitle}", 
-        crie uma playlist com 12 faixas no formato JSON abaixo:
+        crie uma playlist com 4 faixas no formato JSON abaixo:
         [
             { "title": "Nome da Música 1", "artist": "Nome do Artista 1" },
             { "title": "Nome da Música 2", "artist": "Nome do Artista 2" },
