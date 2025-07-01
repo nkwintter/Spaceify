@@ -11,53 +11,46 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import { useSpotifyAuth } from "../../context/SpotifyAuthContext";
 import RNHTMLtoPDF from "react-native-html-to-pdf";
 import * as FileSystem from "expo-file-system";
+import { useNavigation } from "@react-navigation/native";
 import styles from "./profile.styles";
 
-const SPOTIFY_TOKEN = ""; // TOKEN RECEBIDO DO LOGIN
-
 const Profile = () => {
-  const [user, setUser] = useState({ name: "", email: "", avatar: null });
+  // USANDO HOOK DO CONTEXT
+  const { user, logout } = useSpotifyAuth();
+
+  // NAVEGAÇÃO ENTRE TELAS PARA REDIRECIONAR LOGOUT PARA LOGIN
+  const navigation = useNavigation<any>();
+
+  // ESTADOS EDITÁVEIS E MODAL PARA EDITAR PERFIL
   const [customName, setCustomName] = useState("");
-  const [customAvatar, setCustomAvatar] = useState(null);
+  const [customAvatar, setCustomAvatar] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  // CARREGAR DADOS DO ASYNCSTORAGE POSSIBILITANDO CARREGAR ALTERAÇÕES
   useEffect(() => {
-    const fetchData = async () => {
-      const userData = await fetchSpotifyUserProfile();
-      if (userData) setUser(userData);
-
+    const loadCustomData = async () => {
       const nameLocal = await AsyncStorage.getItem("customName");
       const avatarLocal = await AsyncStorage.getItem("customAvatar");
-
       if (nameLocal) setCustomName(nameLocal);
       if (avatarLocal) setCustomAvatar(avatarLocal);
     };
-    fetchData();
+    loadCustomData();
+    // [] PERMITE EXECUTAR APENAS UMA VEZ
   }, []);
 
-  const fetchSpotifyUserProfile = async () => {
-    try {
-      const response = await axios.get("https://api.spotify.com/v1/me", {
-        headers: {
-          Authorization: SPOTIFY_TOKEN,
-        },
-      });
+  // DADOS PARA ABRIR NA PÁGINA. CASO O NOME OU O AVATAR TENHAM SIDO
+  // CUSTOMIZADOS, ELE SERÁ PRIORIDADE. CASO CONTRÁRIO, CARREGA DO SPOTIFY.
+  // CASO NÃO POSSUA NADA, RETORNA PADRÃO.
+  const nameToShow = customName || user?.display_name || "Astronauta";
+  const avatarToShow = customAvatar || user?.images?.[0]?.url || null;
+  const emailToShow = user?.email || ""; 
 
-      return {
-        name: response.data.display_name,
-        email: response.data.email,
-        avatar: response.data.images[0]?.url || null,
-      };
-    } catch (error) {
-      console.error("Erro ao buscar perfil do Spotify", error);
-      return null;
-    }
-  };
-
+  // CARREGAR IMAGEM DO USUÁRIO PARA EDIÇÃO
   const pickImage = async () => {
+    // ABRE A GALERIA DE IMAGENS COM O IMAGEPICKER
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [1, 1],
@@ -65,15 +58,19 @@ const Profile = () => {
     });
 
     if (!result.canceled) {
+      // SALVA O CAMINHO DA IMAGEM NO CUSTOM AVATAR
       setCustomAvatar(result.assets[0].uri);
     }
   };
 
+  // SALVA AS EDIÇÕES LOCALMENTE, API DO SPOTIFY NÃO PERMITE MUDANÇAS EXTERNAS
   const saveEdits = async () => {
     try {
       await AsyncStorage.setItem("customName", customName);
-      if (customAvatar)
+      if (customAvatar) {
         await AsyncStorage.setItem("customAvatar", customAvatar);
+      }
+      // DESABILITA O MODAL DE EDIÇÃO
       setModalVisible(false);
       Alert.alert("Sucesso", "Perfil atualizado!");
     } catch (err) {
@@ -81,27 +78,23 @@ const Profile = () => {
     }
   };
 
-  const nameToShow = customName || user.name;
-  const avatarToShow = customAvatar || user.avatar;
-
+  // CARREGA LOGOUT DO CONTEXTO
   const handleLogout = async () => {
-    try {
-        await AsyncStorage.multiRemove([
-        "spotifyToken",
-        "customName",
-        "customAvatar",
-        ]);
-        Alert.alert("Logout", "Você saiu do perfil");
-        navigation.replace('Login'); // certifique-se que 'navigation' está definido
-    } catch (err) {
-        Alert.alert("Erro", "Não foi possível fazer logout");
-    }
+    await logout();
+    // LIMPA TAMBÉM AS PERSONALIZAÇÕES LOCAIS
+    await AsyncStorage.multiRemove(["customName", "customAvatar"]);
+    // VAI PARA A TELA DE LOGIN
+    navigation.replace("Login"); 
   };
 
-  const handleExportPDF = async () => {
-    const nameToShow = customName || user.name;
-    const emailToShow = user.email;
 
+  // FUNÇÃO PARA EXPORTAR PDF
+  const handleExportPDF = async () => {
+    // CARREGANDO DO CONTEXT
+    const nameToShow = customName || user?.display_name || "Astronauta";
+    const emailToShow = user?.email || "Email não disponível";
+
+    // DOCUMENTO QUE SERÁ CONVERTIDO EM PDF
     const htmlContent = `
     <h1>Spaceify - Perfil do Astronauta</h1>
     <p><strong>Nome:</strong> ${nameToShow}</p>
@@ -109,6 +102,9 @@ const Profile = () => {
     <p><strong>Exportado em:</strong> ${new Date().toLocaleString()}</p>
   `;
 
+    // DOCUMENTO QUE SERÁ CONVERTIDO EM PDF
+    // NOME DO DOCUMENTO
+    // ONDE SERÁ SALVO
     try {
       const options = {
         html: htmlContent,
@@ -116,6 +112,8 @@ const Profile = () => {
         directory: "Documents",
       };
 
+      // FILE CAMINHO DO PDF GERADO
+      // RNHTML VEM DO PACOTE IMPORTADO QUE TRANSFORMARÁ O ARQUIVO EM PDF
       const file = await RNHTMLtoPDF.convert(options);
       Alert.alert("Sucesso", `PDF salvo em:\n${file.filePath}`);
       console.log("PDF criado em:", file.filePath);
@@ -125,6 +123,8 @@ const Profile = () => {
     }
   };
 
+  // FICA MAIS INTUITIVO ORGANIZAR O MEU CSS COM ALGUNS COMANDOS EM PORTUGÊS,
+  // PARA ASSIMILAÇÃO, NÃO ESTRANHEM KK
   return (
     <ScrollView style={styles.container}>
       {/* CABEÇALHO */}
@@ -148,7 +148,7 @@ const Profile = () => {
 
       {/* INFORMAÇÕES */}
       <Text style={styles.name}>{nameToShow}</Text>
-      <Text style={styles.email}>{user.email}</Text>
+      <Text style={styles.email}>{emailToShow}</Text>
 
       {/* AÇÕES RÁPIDAS */}
       <View style={styles.acoes}>
@@ -216,9 +216,7 @@ const Profile = () => {
           <View
             style={{ backgroundColor: "#fff", padding: 20, borderRadius: 12 }}
           >
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-              Editar Nome
-            </Text>
+            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Editar Nome</Text>
             <TextInput
               placeholder="Novo nome"
               value={customName}
