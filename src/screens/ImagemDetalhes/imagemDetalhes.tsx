@@ -125,7 +125,7 @@ export default function ImagemDetalhes() {
 </AnimatedReanimated.View>
 
           <SpotifyButton />
-          <FavoriteButton />
+          <FavoriteButton image={data} />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
