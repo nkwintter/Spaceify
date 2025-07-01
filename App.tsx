@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -10,6 +11,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ImagemDetalhes from './src/screens/ImagemDetalhes/imagemDetalhes';
 
 const Stack = createNativeStackNavigator();
+
 
 export default function App() {
 
@@ -26,5 +28,6 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </SpotifyAuthProvider>
+
   );
 }
