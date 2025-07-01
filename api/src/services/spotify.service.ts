@@ -1,12 +1,31 @@
 import axios from "axios";
 
+async function searchTrack(trackName: string, artist: string, accessToken: string): Promise<string | null> {
+  try {
+    const query = encodeURIComponent(`${trackName} ${artist}`);
+    const response = await axios.get(
+      `https://api.spotify.com/v1/search?q=${query}&type=track&limit=1`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      }
+    );
+
+    const items = response.data.tracks.items;
+    return items.length > 0 ? items[0].uri : null;
+  } catch (error) {
+    console.error(`Erro ao buscar música ${trackName} - ${artist}:`, error);
+    return null;
+  }
+}
+
 export async function createSpotifyPlaylistForUser(
   tracks: { title: string; artist: string }[],
   playlistName: string,
   user_id: string,
   access_token: string
 ) {
-  // 1. Criar a playlist na conta do usuário
   const createRes = await axios.post(
     `https://api.spotify.com/v1/users/${user_id}/playlists`,
     {
@@ -21,7 +40,7 @@ export async function createSpotifyPlaylistForUser(
 
   const playlistId = createRes.data.id;
 
-  // 2. Buscar faixas e adicionar (igual ao serviço anterior)
+
   const trackURIs: string[] = [];
 
   for (const track of tracks) {
