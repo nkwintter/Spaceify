@@ -3,3 +3,9 @@ export type ImageData = {
   title: string;
   explanation: string;
 };
+
+export type FavoriteButtonProps = {
+  image: ImageData;
+  favorito: boolean;
+  setFavorito: (valor: boolean) => void;
+};

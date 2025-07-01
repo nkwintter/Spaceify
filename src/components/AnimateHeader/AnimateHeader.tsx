@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, Animated } from 'react-native';
+import { View, Animated } from 'react-native';
 import { styles } from './AnimateHeaderStyle';
 
 export default function AnimatedHeader() {
@@ -8,7 +8,7 @@ export default function AnimatedHeader() {
   const translateY = useRef(new Animated.Value(20)).current;
 
   useEffect(() => {
-    // Rotação emoji
+
     Animated.loop(
       Animated.sequence([
         Animated.timing(rotateAnim, {
@@ -29,7 +29,7 @@ export default function AnimatedHeader() {
       ])
     ).start();
 
-    // Fade-in + slide-up texto
+    
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
