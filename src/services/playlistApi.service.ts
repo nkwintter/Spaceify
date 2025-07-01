@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { useSpotifyAuth } from '../../context/SpotifyAuthContext';
 import { Linking, Alert } from 'react-native';
+import { useSpotifyAuth } from '../context/SpotifyAuthContext';
 
 interface Props {
   mood: string;

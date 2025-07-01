@@ -1,4 +1,5 @@
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "target": "esnext",
     "lib": [
@@ -25,10 +26,8 @@
   "exclude": [
     "node_modules"
   ],
-  "extends": "expo/tsconfig.base"
-}
 
-    "jsx": "react",
-    "strict": true
-  }
+  "jsx": "react",
+  "strict": true
+  
 }
