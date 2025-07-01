@@ -53,7 +53,7 @@ const SpotifyCallback: React.FC = () => {
           // Se não há parâmetros, pode ser um erro
           console.warn('Nenhum parâmetro recebido no callback');
 
-          // Aguardar um pouco antes de redirecionar (caso os parâmetros venham com delay)
+          // Aguardar um pouco antes de redirecionar 
           setTimeout(() => {
             navigation.reset({
               index: 0,
@@ -65,7 +65,7 @@ const SpotifyCallback: React.FC = () => {
       } catch (error) {
         console.error('Erro ao processar callback do Spotify:', error);
 
-        // Em caso de erro, navegar para login
+        // Em caso de erro, navega para login
         navigation.reset({
           index: 0,
           routes: [{ name: 'Login' as never }],
