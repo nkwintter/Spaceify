@@ -22,7 +22,7 @@ const SpotifyCallback: React.FC = () => {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // Obter parâmetros da navegação (vindos de deep link ou navigation)
+        // Obter parâmetros da navegação 
         const routeParams = (route.params as RouteParams)?.params;
 
         if (routeParams?.access_token) {

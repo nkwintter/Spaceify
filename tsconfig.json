@@ -19,7 +19,8 @@
   },
   "include": [
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "src/context/SpotifyAuthContext"
   ],
   "exclude": [
     "node_modules"

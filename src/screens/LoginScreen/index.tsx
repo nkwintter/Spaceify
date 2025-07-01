@@ -1,18 +1,47 @@
-import React, { useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { useSpotifyAuth } from '../../context/SpotifyAuthProvider.tsx';
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+  Alert
+} from 'react-native';
+import { useSpotifyAuth } from '../../context/SpotifyAuthContext';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from '../../screens/LoginScreen/styles';
 
 const LoginScreen = () => {
-  const { login, isAuthenticated } = useSpotifyAuth();
+  const { login, isAuthenticated, isLoading } = useSpotifyAuth();
   const navigation = useNavigation<any>();
+  const [isConnecting, setIsConnecting] = useState(false);
 
+  // Redirecionar para Home se já estiver autenticado
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigation.navigate('Home');
+      console.log('✅ Usuário autenticado, navegando para Home...');
+      navigation.replace('Home'); // Usar replace em vez de navigate
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigation]);
+
+  const handleLogin = async () => {
+    try {
+      setIsConnecting(true);
+      console.log('Iniciando processo de login...');
+
+      await login();
+
+    } catch (error) {
+      console.error('Erro no login:', error);
+      Alert.alert(
+        'Erro de Conexão',
+        'Não foi possível conectar com o Spotify. Tente novamente.',
+        [{ text: 'OK' }]
+      );
+    } finally {
+      setIsConnecting(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -33,12 +62,23 @@ const LoginScreen = () => {
 
         <Text style={styles.cardText}>conecte a sua conta Spotify</Text>
 
-        <TouchableOpacity style={styles.button} onPress={login}>
-          <Text style={styles.buttonText}>CONECTAR-SE</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleLogin}
+          disabled={isConnecting || isLoading}
+        >
+          {isConnecting ? (
+            <>
+              <ActivityIndicator size="small" color="#ffffff" />
+              <Text style={styles.buttonText}> CONECTANDO...</Text>
+            </>
+          ) : (
+            <Text style={styles.buttonText}>CONECTAR-SE</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>
   );
-}
+};
 
 export default LoginScreen;
