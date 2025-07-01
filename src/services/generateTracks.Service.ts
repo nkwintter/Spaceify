@@ -17,3 +17,5 @@ export async function GenerateTracks(humor:string, imgTitle:string){
         console.log(`${index + 1}. ${music.title} - ${music.artist}`);
     });
 }
+
+//PARA TESTES INDIVIDUAIS, APENAS!!!

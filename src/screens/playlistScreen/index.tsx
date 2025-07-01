@@ -4,7 +4,6 @@ import { CardPlaylist } from '../../components/PlaylistsScreen/cardPlaylist';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BtnGerarPlaylistAstral } from '../../components/PlaylistsScreen/btnGerarPlaylist';
 
-
 export function PlaylistsScreen() {
 
     const playlists = [
