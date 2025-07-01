@@ -4,7 +4,7 @@ import { useSpotifyAuth } from '../../context/SpotifyAuthProvider.tsx';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from '../../screens/LoginScreen/styles';
 
-export default function LoginScreen() {
+const LoginScreen = () => {
   const { login, isAuthenticated } = useSpotifyAuth();
   const navigation = useNavigation<any>();
 
@@ -40,3 +40,5 @@ export default function LoginScreen() {
     </View>
   );
 }
+
+export default LoginScreen;
