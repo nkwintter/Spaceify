@@ -6,9 +6,13 @@ import LoginScreen from './src/screens/LoginScreen';
 import SpotifyCallback from '../Spaceify/src/callback/Spotify/SpotifyCallback';
 // import HomeScreen from './src/screens/HomeScreen';
 
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import ImagemDetalhes from './src/screens/ImagemDetalhes/imagemDetalhes';
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
   return (
     <SpotifyAuthProvider>
       <NavigationContainer>
