@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-export const getStyles = (theme: 'dark' | 'light') => {
-  const isDark = theme === 'dark';
+export const getStyles = (theme: any) => {
+  const isDark = theme.colors.background.primary === '#1e1226';
 
   return StyleSheet.create({
     container: {
