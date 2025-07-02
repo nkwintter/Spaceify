@@ -6,7 +6,7 @@ export const getStyles = (theme: 'dark' | 'light') => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: isDark ? '#0F0F0F' : '#FFFFFF',
+      backgroundColor: isDark ? '#171627' : '#FFFFFF',
       padding: 16,
     },
     inicio: {
@@ -56,7 +56,7 @@ export const getStyles = (theme: 'dark' | 'light') => {
       marginBottom: 20,
     },
     acaoBotao: {
-      backgroundColor: isDark ? '#1EBFDB' : '#5C8EF2',
+      backgroundColor: isDark ? '#1EBFDB' : '#5C8EF2', 
       padding: 10,
       borderRadius: 10,
       marginBottom: 10,
@@ -117,6 +117,104 @@ export const getStyles = (theme: 'dark' | 'light') => {
     avancadoTexto: {
       color: isDark ? '#FFFFFF' : '#1A1A1A',
       textAlign: 'center',
+    },
+    manchasContainer: {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      zIndex: -1,
+    },
+    manchaRoxa: {
+      position: 'absolute',
+      top: 80,
+      left: -100,
+      width: 350,
+      height: 300,
+      backgroundColor: '#4E3592',
+      borderTopLeftRadius: 180,
+      borderTopRightRadius: 60,
+      borderBottomLeftRadius: 80,
+      borderBottomRightRadius: 200,
+      opacity: 0.3,
+      transform: [{ rotate: '25deg' }],
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 10,
+    },
+
+    manchaAzul: {
+      position: 'absolute',
+      top: 400,
+      right: -120,
+      width: 300,
+      height: 270,
+      backgroundColor: '#1EBFDB',
+      borderTopLeftRadius: 140,
+      borderTopRightRadius: 190,
+      borderBottomLeftRadius: 100,
+      borderBottomRightRadius: 50,
+      opacity: 0.25,
+      transform: [{ rotate: '-30deg' }],
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 10,
+    },
+    botaoEngrenagem: {
+      position: 'absolute',
+      bottom: 25,
+      left: 20,
+      backgroundColor: '#1EBFDB',
+      borderRadius: 30,
+      padding: 12,
+      zIndex: 10,
+      elevation: 6,
+    },
+    playlistImg: {
+      width: 40,
+      height: 40,
+      borderRadius: 10,
+      marginRight: 10,
+    },
+    logoutButton: {
+      position: 'absolute',
+      top: 40,
+      right: 20,
+      zIndex: 10,
+    },
+    menuConfig: {
+      position: 'absolute',
+      bottom: 80,
+      left: 20,
+      backgroundColor: '#1EBFDB',
+      borderRadius: 12,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      zIndex: 15,
+      elevation: 10,
+      width: 200,
+    },
+
+    menuItem: {
+      paddingVertical: 8,
+    },
+
+    menuText: {
+      color: '#0F0F0F',
+      fontWeight: '600',
+    },
+    boxContainer: {
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 20,
+      overflow: 'hidden', 
+    },
+    boxTitle: {
+      color: '#1EBFDB',
+      fontWeight: 'bold',
+      fontSize: 18,
+      marginBottom: 12,
     },
   });
 };
