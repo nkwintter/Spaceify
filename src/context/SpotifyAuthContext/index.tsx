@@ -164,7 +164,9 @@ export const SpotifyAuthProvider = ({ children }: { children: React.ReactNode })
         'user-top-read',
         'streaming',
         'user-read-playback-state',
-        'user-modify-playback-state'
+        'user-modify-playback-state',
+        'playlist-modify-public',     
+        'playlist-modify-private'
       ],
       usePKCE: true,
       responseType: AuthSession.ResponseType.Code,

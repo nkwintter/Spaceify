@@ -9,6 +9,7 @@ app.use(express.json());
 
 app.post('/generate-playlist', async (req: Request, res: Response) => {
   const { mood, imageTitle } = req.body;
+  console.log('📩 Body recebido:', req.body);
 
   if (!mood || !imageTitle) {
     return res.status(400).json({ error: 'Campos obrigatórios: mood e imageTitle' });

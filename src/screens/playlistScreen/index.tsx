@@ -6,9 +6,10 @@ import { BtnGerarPlaylistAstral } from '../../components/PlaylistsScreen/btnGera
 
 export function PlaylistsScreen() {
 
+    //para testes...
     const playlists = [
-        'Playlist 1',
-        'Playlist 2',
+        // 'Playlist 1',
+        // 'Playlist 2',
     ]
 
     return (

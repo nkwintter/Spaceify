@@ -41,6 +41,7 @@ export const cardPlaylist = StyleSheet.create({
 
 export const btnGerarPlaylist = StyleSheet.create({
     container:{
+        flexDirection: 'row',
         margin: 10,
         backgroundColor: '#1338cc',
         padding: 10,
@@ -48,12 +49,22 @@ export const btnGerarPlaylist = StyleSheet.create({
         maxWidth: '75%',
     },
 
+    alinhamentoItens:{
+        flexDirection: 'row'
+    },
+
     txt:{
-        marginLeft: 10,
+        marginRight: 10,
+        marginVertical: 8,
         fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#fff',
         
+    },
+
+    icon:{
+        margin: 5,
     }
+
 })
