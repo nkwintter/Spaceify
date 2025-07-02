@@ -198,7 +198,7 @@ const Profile = () => {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: theme === "dark" ? "#0F0F0F" : "#FFFFFF",
+          backgroundColor: isDarkTheme ? "#0F0F0F" : "#FFFFFF",
         }}
       >
         <TouchableOpacity
@@ -209,7 +209,7 @@ const Profile = () => {
           <Feather
             name="log-out"
             size={24}
-            color={theme === "dark" ? "#1EBFDB" : "#1E4789"}
+            color={isDarkTheme ? "#1EBFDB" : "#1E4789"}
           />
         </TouchableOpacity>
         <ScrollView style={styles.container}>

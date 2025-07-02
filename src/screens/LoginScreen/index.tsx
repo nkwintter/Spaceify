@@ -20,7 +20,7 @@ const LoginScreen = () => {
   React.useEffect(() => {
     if (isAuthenticated) {
       console.log('✅ Usuário autenticado, navegando para Home...');
-      navigation.replace('Playlists'); // Usar replace em vez de navigate
+      navigation.replace('Profile');//navigation.replace('Playlists'); // Usar replace em vez de navigate
     }
   }, [isAuthenticated, navigation]);
 
