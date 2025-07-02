@@ -9,59 +9,99 @@ import {
 } from 'react-native';
 import AnimatedReanimated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
 import FavoriteButton from '../../components/FavoriteButton/favoriteButton';
 import ImageTitle from '../../components/ImageTitle/ImageTitle';
 import ImageViewer from '../../components/ImageViewer/ImageViewer';
 import SpotifyButton from '../../components/SpotifyButton/SpotifyButton';
-
 import AnimatedHeader from '../../components/AnimateHeader/AnimateHeader';
-import { fetchApod } from '../../services/nasaApiService';
-import { ImageData } from '../../types/types';
-import { localStyles } from './imagemDetalhesStyle';
+import ButtonBackCateg from '../../components/ButtonBackCateg/ButtonBackCateg';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { localStyles } from './imagemDetalhesStyle';
+import { ImageData } from '../../types/types';
+
+const FAVORITO_KEY = '@imagens_favoritas';
 
 export default function ImagemDetalhes() {
+  const route = useRoute();
+  const navigation = useNavigation();
+
+  // Protege acesso aos params
+  const params = route.params as { item?: ImageData; categoria?: string } | undefined;
+
+  if (!params?.item) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000" }}>
+        <Text style={{ color: "white", fontSize: 18 }}>
+          Nenhuma imagem foi passada para exibição.
+        </Text>
+        <Text
+          style={{ color: "#7FB3FF", marginTop: 20 }}
+          onPress={() => navigation.goBack()}
+        >
+          ← Voltar
+        </Text>
+      </View>
+    );
+  }
+
+  const { item, categoria = "default" } = params;
+
   const [data, setData] = useState<ImageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // const [favorito, setFavorito] = useState(false);
+  const [favorito, setFavorito] = useState(false);
 
   useEffect(() => {
-    async function getApod() {
-      try {
-        const apodData = await fetchApod();
+    const imageUrl = item.hdurl ?? item.url ?? item.thumbnail_url ?? null;
+    if (!imageUrl) {
+      setError("URL da imagem não encontrada.");
+      setLoading(false);
+      return;
+    }
+    setData({
+      url: imageUrl,
+      title: item.title,
+      explanation: item.explanation,
+      date: item.date,
+      media_type: item.media_type,
+    });
+    setLoading(false);
+  }, [item]);
 
-        if (apodData.media_type === 'image') {
-          setData({
-            url: apodData.hdurl || apodData.url,
-            title: apodData.title,
-            explanation: apodData.explanation,
-          });
-        } else if (apodData.media_type === 'video' && apodData.thumbnail_url) {
-          setData({
-            url: apodData.thumbnail_url,
-            title: apodData.title,
-            explanation: apodData.explanation,
-          });
-        } else {
-          setError('Conteúdo da NASA não é uma imagem');
-        }
-      } catch {
-        setError('Erro ao carregar dados da NASA.');
-      } finally {
-        setLoading(false);
-      }
+  useEffect(() => {
+    async function checkFavorito() {
+      if (!data) return;
+      const salvo = await AsyncStorage.getItem(FAVORITO_KEY);
+      const lista = salvo ? JSON.parse(salvo) : [];
+      const existe = lista.some((favItem: ImageData) => favItem.url === data.url);
+      setFavorito(existe);
+    }
+    checkFavorito();
+  }, [data]);
+
+  const toggleFavorito = async () => {
+    if (!data) return;
+    const salvo = await AsyncStorage.getItem(FAVORITO_KEY);
+    let lista = salvo ? JSON.parse(salvo) : [];
+    const existe = lista.find((favItem: ImageData) => favItem.url === data.url);
+
+    if (existe) {
+      lista = lista.filter((favItem: ImageData) => favItem.url !== data.url);
+      setFavorito(false);
+    } else {
+      lista.push(data);
+      setFavorito(true);
     }
 
-    getApod();
-  }, []);
+    await AsyncStorage.setItem(FAVORITO_KEY, JSON.stringify(lista));
+  };
 
-  if (loading)
+  if (loading) {
     return (
-      <LinearGradient
-        colors={['#0B0B22', '#18002C']} style={localStyles.gradient}
-      >
+      <LinearGradient colors={["#0B0B22", "#18002C"]} style={localStyles.gradient}>
         <SafeAreaView style={localStyles.safeArea}>
           <StatusBar backgroundColor="#0D1B2A" barStyle="light-content" />
           <View style={localStyles.centered}>
@@ -70,10 +110,11 @@ export default function ImagemDetalhes() {
         </SafeAreaView>
       </LinearGradient>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
-      <LinearGradient colors={['#1b1c3a', '#0a0e23']} style={localStyles.gradient}>
+      <LinearGradient colors={["#1b1c3a", "#0a0e23"]} style={localStyles.gradient}>
         <SafeAreaView style={localStyles.safeArea}>
           <StatusBar backgroundColor="#0D1B2A" barStyle="light-content" />
           <View style={localStyles.centered}>
@@ -82,16 +123,14 @@ export default function ImagemDetalhes() {
         </SafeAreaView>
       </LinearGradient>
     );
+  }
 
   if (!data) return null;
 
   return (
-    <LinearGradient
-      colors={['#0B0B22', '#18002C']} style={localStyles.gradient}
-    >
+    <LinearGradient colors={["#0B0B22", "#18002C"]} style={localStyles.gradient}>
       <SafeAreaView style={localStyles.safeArea}>
         <StatusBar backgroundColor="#0D1B2A" barStyle="light-content" />
-
         <ScrollView contentContainerStyle={localStyles.scrollContent}>
           <AnimatedReanimated.View entering={FadeIn.duration(700)}>
             <AnimatedHeader />
@@ -102,16 +141,7 @@ export default function ImagemDetalhes() {
           </AnimatedReanimated.View>
 
           <AnimatedReanimated.View entering={FadeIn.delay(800).duration(700)}>
-            <Text style={{
-              color: '#B0C4DE',
-              fontSize: 16,
-              fontWeight: '600',
-              textAlign: 'center',
-              marginVertical: 12,
-              textShadowColor: 'rgba(0,0,0,0.5)',
-              textShadowOffset: { width: 0, height: 1 },
-              textShadowRadius: 4,
-            }}>
+            <Text style={localStyles.descriptionIntro}>
               Aqui está a descrição da imagem escolhida
             </Text>
           </AnimatedReanimated.View>
@@ -120,8 +150,17 @@ export default function ImagemDetalhes() {
             <ImageTitle title={data.title} description={data.explanation} />
           </AnimatedReanimated.View>
 
-          <SpotifyButton />
-          <FavoriteButton />
+          <AnimatedReanimated.View entering={FadeIn.delay(300).duration(600)}>
+            <ButtonBackCateg />
+          </AnimatedReanimated.View>
+
+          <SpotifyButton mood={categoria} imageTitle={data.title} />
+
+          <FavoriteButton
+            image={data}
+            favorito={favorito}
+            setFavorito={toggleFavorito}
+          />
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>

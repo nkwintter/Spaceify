@@ -18,6 +18,7 @@ export function PlaylistsScreen() {
     const [playlists, setPlaylists] = useState<PlaylistItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+
     const loadPlaylists = async () => {
         try {
             setIsLoading(true);
@@ -36,6 +37,7 @@ export function PlaylistsScreen() {
             loadPlaylists();
         }, [])
     );
+
 
     return (
         <LinearGradient

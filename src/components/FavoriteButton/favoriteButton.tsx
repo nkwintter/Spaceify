@@ -1,27 +1,23 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { TouchableOpacity, Animated, View, StyleSheet } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { TouchableOpacity, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styles } from './FavoriteButtonStyle';
 
-const FAVORITO_KEY = '@imagem_favorita';
+type Props = {
+  image: {
+    url: string;
+    title: string;
+    explanation: string;
+  };
+  favorito: boolean;
+  setFavorito: () => void; 
+};
 
-export default function FavoriteButton() {
-  const [favorito, setFavorito] = useState(false);
+export default function FavoriteButton({ image, favorito, setFavorito }: Props) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const textoOpacity = useRef(new Animated.Value(1)).current;
   const beatAnim = useRef<Animated.CompositeAnimation | null>(null);
-
-  useEffect(() => {
-    const carregarFavorito = async () => {
-      const salvo = await AsyncStorage.getItem(FAVORITO_KEY);
-      if (salvo === 'true') {
-        setFavorito(true);
-      }
-    };
-    carregarFavorito();
-  }, []);
 
   useEffect(() => {
     if (favorito) {
@@ -45,12 +41,6 @@ export default function FavoriteButton() {
       scaleAnim.setValue(1);
     }
   }, [favorito]);
-
-  const toggleFavorito = async () => {
-    const novoEstado = !favorito;
-    setFavorito(novoEstado);
-    await AsyncStorage.setItem(FAVORITO_KEY, novoEstado.toString());
-  };
 
   const animatePress = () => {
     Animated.sequence([
@@ -80,16 +70,19 @@ export default function FavoriteButton() {
       ]),
     ]).start();
 
-    toggleFavorito();
+    setFavorito(); 
   };
 
-  // Escolhe cores do gradiente com base no estado favorito
   const gradientColors: [string, string, ...string[]] = favorito
-    ? ['#1BC0DC', '#1E4789', '##1EBFDB'] // roxos escuros, galácticos
-    : ['#1A237E', '#1EBFDB', '#1E4789']; // tons escuros de azul
+    ? ['#1BC0DC', '#1E4789', '#1EBFDB']
+    : ['#1A237E', '#1EBFDB', '#1E4789'];
 
   return (
-    <TouchableOpacity activeOpacity={0.8} onPress={animatePress} style={{ borderRadius: 25 }}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={animatePress}
+      style={{ borderRadius: 25 }}
+    >
       <LinearGradient
         colors={gradientColors}
         start={{ x: 0, y: 0 }}
