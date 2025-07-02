@@ -23,7 +23,8 @@ import { Feather } from "@expo/vector-icons";
 
 const Profile = () => {
   // USANDO HOOK DO CONTEXT
-  const { theme, toggleTheme } = useTheme();
+  const { theme, isDarkTheme, toggleTheme } = useTheme();
+  const { colors, fonts, gradients } = theme;
   const styles = getStyles(theme);
 
   // USANDO HOOK DO CONTEXT
@@ -197,7 +198,7 @@ const Profile = () => {
       <SafeAreaView
         style={{
           flex: 1,
-          backgroundColor: theme === "dark" ? "#0F0F0F" : "#FFFFFF",
+          backgroundColor: isDarkTheme ? "#0F0F0F" : "#FFFFFF",
         }}
       >
         <TouchableOpacity
@@ -208,7 +209,7 @@ const Profile = () => {
           <Feather
             name="log-out"
             size={24}
-            color={theme === "dark" ? "#1EBFDB" : "#1E4789"}
+            color={isDarkTheme ? "#1EBFDB" : "#1E4789"}
           />
         </TouchableOpacity>
         <ScrollView style={styles.container}>
