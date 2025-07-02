@@ -7,8 +7,25 @@ import SpotifyButton from '../../components/SpotifyButton/SpotifyButton';
 import { fetchApod } from '../../services/nasaApiService';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import FavoriteButton from '../../components/FavoriteButton/favoriteButton';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { useMood } from '../../contexts/moodContexts'
+
+
+type ImagemFavorita = {
+  url: string;
+  title: string;
+};
+
+type RootStackParamList = {
+  Home: undefined;
+  ImagemDetalhes: undefined;
+};
+
+type HomeNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 
 export type ImageData = {
@@ -23,94 +40,112 @@ function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString('pt-BR', options);
 }
 
-const favorites = [
-  { name: 'Chuva de Meteoros', image: require('../../assets/meteoro.jpg') },
-  { name: 'Tranquilidade Estelar', image: require('../../assets/estelar.jpg') },
-  { name: 'Nebulosa Violeta', image: require('../../assets/violeta.jpg') },
-  { name: 'Lo-fi Galáctico', image: require('../../assets/lofi.jpg') },
-];
 
-export default function Home() {
-  const [data, setData] = useState<ImageData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState(false);
-  const { changeMood, moods, currentMoodIndex} = useMood();
+export default function Home({ navigation }: { navigation: HomeNavigationProp }) {
+const [dados, setDados] = useState<ImageData | null>(null);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState<string | null>(null);
+const [expanded, setExpanded] = useState(false);
 
-  const animation = useRef(new Animated.Value(0)).current;
-
-  const currentColors = moods[currentMoodIndex].colors;
-
-  const nextMoodIndex = (currentMoodIndex + 1) % moods.length;
-
-  const nextColors = moods[nextMoodIndex].colors;
-
-  const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
-
-  // interpolação para animar entre as cores atuais e as próximas
-  const color1 = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [currentColors[0], nextColors[0]]
-  });
-
-  const color2 = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [currentColors[1], nextColors[1]]
-  });
-
-  const handleChangeMood = () => {
-    Animated.timing(animation, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: false
-    }).start(() => {
-      changeMood();        // aqui chamamos o changeMood do contexto
-      animation.setValue(0);
-    });
+const handlePress = () => {
+    navigation.navigate('ImagemDetalhes'); 
   };
 
-  useEffect(() => {
-    async function getApod() {
-      try {
-        const apodData = await fetchApod();
 
-        if (apodData.media_type === 'image') {
-          setData({
-            url: apodData.hdurl || apodData.url,
-            title: apodData.title,
-            explanation: apodData.explanation,
-            date: apodData.date,
-          });
-        } else if (apodData.media_type === 'video' && apodData.thumbnail_url) {
-          setData({
-            url: apodData.thumbnail_url,
-            title: apodData.title,
-            explanation: apodData.explanation,
-            date: apodData.date,
-          });
-        } else {
-          setError('Conteúdo da NASA não é uma imagem');
-        }
-      } catch {
-        setError('Erro ao carregar dados da NASA.');
-      } finally {
-        setLoading(false);
+const { changeMood, moods, currentMoodIndex } = useMood();
+
+const animation = useRef(new Animated.Value(0)).current;
+
+const coresAtuais = moods[currentMoodIndex].colors;
+
+const proximoIndiceMood = (currentMoodIndex + 1) % moods.length;
+
+const proximasCores = moods[proximoIndiceMood].colors;
+
+const GradienteAnimado = Animated.createAnimatedComponent(LinearGradient);
+
+// interpolação para animar entre as cores atuais e as próximas
+const cor1 = animation.interpolate({
+  inputRange: [0, 1],
+  outputRange: [coresAtuais[0], proximasCores[0]]
+});
+
+const cor2 = animation.interpolate({
+  inputRange: [0, 1],
+  outputRange: [coresAtuais[1], proximasCores[1]]
+});
+
+const trocarMood = () => {
+  Animated.timing(animation, {
+    toValue: 1,
+    duration: 500,
+    useNativeDriver: false
+  }).start(() => {
+    changeMood(); // chama o changeMood do contexto
+    animation.setValue(0);
+  });
+};
+
+const [favoritos, setFavoritos] = useState<ImagemFavorita[]>([]);
+
+useEffect(() => {
+  const carregarFavoritos = async () => {
+    try {
+      const dados = await AsyncStorage.getItem('@imagens_favoritas');
+      if (dados) {
+        setFavoritos(JSON.parse(dados));
       }
+    } catch (e) {
+      console.log('Erro ao carregar favoritos:', e);
     }
+  };
+  
+  carregarFavoritos();
+}, []);
 
-    getApod();
-  }, []);
+useEffect(() => {
+  async function getApod() {
+    try {
+      const dadosApod = await fetchApod();
+
+      if (dadosApod.media_type === 'image') {
+        setDados({
+          url: dadosApod.hdurl || dadosApod.url,
+          title: dadosApod.title,
+          explanation: dadosApod.explanation,
+          date: dadosApod.date,
+        });
+      } else if (dadosApod.media_type === 'video' && dadosApod.thumbnail_url) {
+        setDados({
+          url: dadosApod.thumbnail_url,
+          title: dadosApod.title,
+          explanation: dadosApod.explanation,
+          date: dadosApod.date,
+        });
+      } else {
+        setError('Conteúdo da NASA não é uma imagem');
+      }
+    } catch {
+      setError('Erro ao carregar dados da NASA.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  getApod();
+}, []);
+
 
   if (loading) {
     return (
-      <AnimatedLinearGradient colors={[color1, color2]} style={styles.gradient}>
+      <GradienteAnimado colors={[cor1, cor2]} style={styles.gradient}>
         <SafeAreaView style={styles.safeArea}>
           <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
           <View style={styles.centered}>
             <ActivityIndicator size="large" color="#7FB3FF" />
           </View>
         </SafeAreaView>
-      </AnimatedLinearGradient>
+      </GradienteAnimado>
     );
   }
 
@@ -123,23 +158,24 @@ export default function Home() {
   }
 
   return (
-    <AnimatedLinearGradient colors={[color1, color2]} style={styles.gradient}>
+    <GradienteAnimado colors={[cor1, cor2]} style={styles.gradient}>
     <SafeAreaView style={styles.safeArea}>
     <ScrollView style={styles.container}>
      
       <Text style={styles.title}>Imagem do Dia</Text>
 
-      {data && (
+      {dados && (
+        <TouchableOpacity onPress={handlePress}>
         <View style={styles.imageContainer}>
-          <Image source={{ uri: data.url }} style={styles.image} />
+          <Image source={{ uri: dados.url }} style={styles.image} />
           <View style={styles.imagePorCima}>
-            <Text style={styles.imageTitle}>{data.title}</Text>
-            <Text style={styles.imageDate}>{formatDate(data.date)}</Text>
+            <Text style={styles.imageTitle}>{dados.title}</Text>
+            <Text style={styles.imageDate}>{formatDate(dados.date)}</Text>
             <Text
               style={styles.imageDescription}
               numberOfLines={expanded ? undefined : 2}
             >
-              {data.explanation}
+              {dados.explanation}
             </Text>
             <TouchableOpacity onPress={() => setExpanded(!expanded)}>
               <Text style={styles.seeMore}>
@@ -148,6 +184,7 @@ export default function Home() {
             </TouchableOpacity>
           </View>
         </View>
+        </TouchableOpacity>
       )}
 
       <SpotifyButton />
@@ -156,7 +193,7 @@ export default function Home() {
         <Text style={styles.moodLabel}>Mood Atual</Text>
         <View style={styles.moodRow}>
           <Text style={styles.moodText}>{moods[currentMoodIndex].name}</Text>
-          <TouchableOpacity onPress={handleChangeMood}>
+          <TouchableOpacity onPress={trocarMood}>
           <Text style={styles.changeMood}>Trocar mood</Text>
         </TouchableOpacity>
 
@@ -164,23 +201,24 @@ export default function Home() {
       </View>
 
      
-      <Text style={styles.favoritesTitle}>Favoritos Recentes</Text>
+      <Text style={styles.favoritesTitle}>Imagens Favoritas Recentes</Text>
       <FlatList
-        data={favorites}
+        data={favoritos}
+        keyExtractor={(item) => item.url}
+        renderItem={({ item }) => (
+         <TouchableOpacity onPress={handlePress}>
+        <View style={styles.favoriteCard}>
+        <Image source={{ uri: item.url }} style={styles.favoriteImage} />
+        <Text style={styles.favoriteText}>{item.title}</Text>
+        </View>
+        </TouchableOpacity> 
+        )}
         horizontal
         showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.name}
-        renderItem={({ item }) => (
-          <View style={styles.favoriteCard}>
-            <Image source={item.image} style={styles.favoriteImage} />
-            <Text style={styles.favoriteText}>{item.name}</Text>
-          </View>
-        )}
-        style={styles.favoritesScroll}
-      />
+        />
     </ScrollView>
     </SafeAreaView>
-    </AnimatedLinearGradient>
+    </GradienteAnimado>
   );
 }
 
