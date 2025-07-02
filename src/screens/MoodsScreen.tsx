@@ -8,12 +8,11 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { fetchApodList } from "../services/nasaApiService";
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-// COMPONENTE DO BOTÃO
+import { fetchApodList } from "../services/nasaApiService";
 import BlobButton from "../components/BlobButton";
 
-// ASSETS
 import Blob01 from "../assets/blob01.svg";
 import Blob02 from "../assets/blob02.svg";
 import Blob03 from "../assets/blob03.svg";
@@ -21,21 +20,45 @@ import Blob04 from "../assets/blob04.svg";
 import Blob05 from "../assets/blob05.svg";
 import Blob06 from "../assets/blob06.svg";
 import Blob07 from "../assets/blob07.svg";
+import { RootStackParamList } from "../navigation/types";
+
+
 
 const blobComponents = [
   Blob01, Blob02, Blob03, Blob04, Blob05, Blob06, Blob07,
   Blob01, Blob02, Blob03,
 ];
 
+// Categorias fixas para filtro
+const categorias = [
+  "nebulosa",
+  "galáxia",
+  "terra",
+  "marte",
+  "lua",
+  "estrela",
+  "hubble",
+  "eclipse",
+  "saturno",
+  "andromeda",
+];
+
+// Tipagem do navigation para esta tela
+type MoodsScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Moods'>;
+
 export default function MoodsScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<MoodsScreenNavigationProp>();
   const [apodList, setApodList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState<string | null>(null);
+  const [filtrados, setFiltrados] = useState<any[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const data = await fetchApodList(10);
+        // Buscando 50 para maior chance no filtro
+        const data = await fetchApodList(50);
         setApodList(data);
       } catch (e) {
         console.error("Erro ao carregar imagens:", e);
@@ -46,6 +69,17 @@ export default function MoodsScreen() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    if (!categoriaSelecionada) {
+      setFiltrados([]);
+      return;
+    }
+    const filtro = apodList.filter((item) =>
+      item.title?.toLowerCase().includes(categoriaSelecionada.toLowerCase())
+    );
+    setFiltrados(filtro);
+  }, [categoriaSelecionada, apodList]);
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -55,28 +89,68 @@ export default function MoodsScreen() {
     );
   }
 
+  if (!categoriaSelecionada) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Escolha uma categoria</Text>
+        </View>
+        <ScrollView contentContainerStyle={styles.blobContainer}>
+          {categorias.map((categoria, i) => {
+            const BlobComponent = blobComponents[i % blobComponents.length];
+            return (
+              <View style={styles.blobWrapper} key={categoria}>
+                <BlobButton
+                  label={categoria}
+                  colors={["#5f2c82", "#49a09d"]}
+                  BlobComponent={BlobComponent}
+                  onPress={() => setCategoriaSelecionada(categoria)}
+                />
+              </View>
+            );
+          })}
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>MOODS</Text>
+        <Text style={styles.title}>Categoria: {categoriaSelecionada}</Text>
+        <Text
+          style={{ color: "white", marginVertical: 6, textAlign: "center" }}
+          onPress={() => setCategoriaSelecionada(null)}
+        >
+          ← Voltar para categorias
+        </Text>
       </View>
-
       <ScrollView contentContainerStyle={styles.blobContainer}>
-        {apodList.map((item, index) => {
-          const label = item.title;
-          const BlobComponent = blobComponents[index % blobComponents.length];
-
-          return (
-            <View style={styles.blobWrapper} key={label + index}>
-              <BlobButton
-                label={label}
-                colors={["#5f2c82", "#49a09d"]}
-                BlobComponent={BlobComponent}
-                onPress={() => navigation.navigate("ImagemDetalhes", { item })}
-              />
-            </View>
-          );
-        })}
+        {filtrados.length === 0 ? (
+          <Text style={{ color: "white", textAlign: "center" }}>
+            Nenhuma imagem encontrada para essa categoria.
+          </Text>
+        ) : (
+          filtrados.map((item, index) => {
+            const label = item.title;
+            const BlobComponent = blobComponents[index % blobComponents.length];
+            return (
+              <View style={styles.blobWrapper} key={label + index}>
+                <BlobButton
+                  label={label}
+                  colors={["#5f2c82", "#49a09d"]}
+                  BlobComponent={BlobComponent}
+                  onPress={() =>
+                    navigation.navigate("Details", {
+                      item,
+                      categoria: categoriaSelecionada,
+                    })
+                  }
+                />
+              </View>
+            );
+          })
+        )}
       </ScrollView>
     </SafeAreaView>
   );
