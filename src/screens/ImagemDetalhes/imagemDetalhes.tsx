@@ -34,27 +34,27 @@ export default function ImagemDetalhes() {
   const [favorito, setFavorito] = useState(false);
 
   // Carrega os dados vindos do botão (item)
-useEffect(() => {
-  if (item) {
-    const imageUrl = item.hdurl ?? item.url ?? item.thumbnail_url ?? null;
-    if (!imageUrl) {
-      setError('URL da imagem não encontrada.');
+  useEffect(() => {
+    if (item) {
+      const imageUrl = item.hdurl ?? item.url ?? item.thumbnail_url ?? null;
+      if (!imageUrl) {
+        setError('URL da imagem não encontrada.');
+        setLoading(false);
+        return;
+      }
+      setData({
+        url: imageUrl,
+        title: item.title,
+        explanation: item.explanation,
+        date: item.date,
+        media_type: item.media_type,
+      });
       setLoading(false);
-      return;
+    } else {
+      setError('Nenhuma imagem foi passada.');
+      setLoading(false);
     }
-    setData({
-      url: imageUrl,
-      title: item.title,
-      explanation: item.explanation,
-      date: item.date,
-      media_type: item.media_type,
-    });
-    setLoading(false);
-  } else {
-    setError('Nenhuma imagem foi passada.');
-    setLoading(false);
-  }
-}, [item]);
+  }, [item]);
 
   // Verifica se está favoritada
   useEffect(() => {
@@ -156,7 +156,10 @@ useEffect(() => {
             <ButtonBackCateg />
           </AnimatedReanimated.View>
 
-          <SpotifyButton />
+          <SpotifyButton
+            mood={'espacial'}
+            imageTitle={data.title}
+          />
 
           <FavoriteButton
             image={data}
