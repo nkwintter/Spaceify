@@ -9,6 +9,7 @@ import Profile from './src/screens/profile/Profile';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ImagemDetalhes from './src/screens/ImagemDetalhes/imagemDetalhes';
 import { PlaylistsScreen } from './src/screens/playlistScreen';
+import MoodsScreen from './src/screens/MoodsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,9 @@ export default function App() {
           <Stack.Screen name="SpotifyCallback" component={SpotifyCallback} />
           <Stack.Screen name="Playlists" component={PlaylistsScreen} />
           <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="ImagemDetalhes" component={ImagemDetalhes} />
+          <Stack.Screen name="MoodsScreen" component={MoodsScreen} />
+        
           {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
         </Stack.Navigator>
       </NavigationContainer>

@@ -7,20 +7,27 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { styles } from './ButtonBackCategStyle';
+
+type RootStackParamList = {
+  MoodsScreen: undefined;
+  ImagemDetalhes: { item: any };
+};
 
 export default function ButtonBackCateg() {
   const rotation = useSharedValue(0);
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const animatedIconStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ rotate: `${rotation.value}deg` }],
-    };
-  });
+  const animatedIconStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
 
   const handlePress = () => {
     rotation.value = withTiming(rotation.value + 360, { duration: 500 });
-    console.log('Voltar para Categorias (em breve com navegação)');
+    setTimeout(() => {
+      navigation.navigate('MoodsScreen');
+    }, 300);
   };
 
   return (
