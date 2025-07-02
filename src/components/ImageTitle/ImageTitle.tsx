@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import {
   Text,
-  View,
   TouchableOpacity,
   LayoutAnimation,
-  Platform,
-  UIManager,
+  
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { styles } from './ImageTitleStyle';
