@@ -23,7 +23,8 @@ import { Feather } from "@expo/vector-icons";
 
 const Profile = () => {
   // USANDO HOOK DO CONTEXT
-  const { theme, toggleTheme } = useTheme();
+  const { theme, isDarkTheme, toggleTheme } = useTheme();
+  const { colors, fonts, gradients } = theme;
   const styles = getStyles(theme);
 
   // USANDO HOOK DO CONTEXT
