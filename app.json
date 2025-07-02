@@ -2,6 +2,7 @@
   "expo": {
     "name": "Spaceify",
     "slug": "Spaceify",
+    "scheme": "spaceify",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,13 +21,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.Spaceify"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+     "expo-web-browser"
+     "expo-font"
+
     ]
   }
 }

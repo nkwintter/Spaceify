@@ -1,9 +1,34 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "target": "esnext",
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
     "esModuleInterop": true,
-    "jsx": "react-native",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react-jsx"
     "types": ["react-native-svg", "node"]
-    },
-  "include": ["src", "svg.d.ts"]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "src/context/SpotifyAuthContext",
+    "src", 
+    "svg.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "jsx": "react",
+  "strict": true
 }
