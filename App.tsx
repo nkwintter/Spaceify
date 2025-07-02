@@ -22,7 +22,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{ headerShown: false }}
-          initialRouteName="Login" // Alterar para a tela inicial desejada
+          initialRouteName="ImagemDetalhes" // Alterar para a tela inicial desejada
         >
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="SpotifyCallback" component={SpotifyCallback} />

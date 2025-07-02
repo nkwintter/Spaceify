@@ -24,11 +24,14 @@ export default function ButtonBackCateg() {
   }));
 
   const handlePress = () => {
-    rotation.value = withTiming(rotation.value + 360, { duration: 500 });
-    setTimeout(() => {
-      navigation.navigate('MoodsScreen');
-    }, 300);
-  };
+  rotation.value = withTiming(rotation.value + 360, { duration: 500 });
+  setTimeout(() => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'MoodsScreen' }],
+    });
+  }, 300);
+};
 
   return (
     <Animated.View entering={FadeInLeft.duration(700)}>
