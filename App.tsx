@@ -4,7 +4,8 @@ import { SpotifyAuthProvider } from './src/context/SpotifyAuthContext';
 import LoginScreen from './src/screens/LoginScreen';
 import SpotifyCallback from '../Spaceify/src/callback/Spotify/SpotifyCallback';
 import Profile from './src/screens/profile/Profile';
-import Home from './src/screens/Home/home';
+import { ThemeProvider } from './src/context/ThemeContext';
+// import HomeScreen from './src/screens/HomeScreen';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { MoodProvider } from './src/contexts/moodContexts';
@@ -19,25 +20,25 @@ export default function App() {
 
 
   return (
-    <SpotifyAuthProvider>
-      <MoodProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          screenOptions={{ headerShown: false }}
-          initialRouteName="Home"
-        >
-          {/* <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="SpotifyCallback" component={SpotifyCallback} />
-          <Stack.Screen name="Playlists" component={PlaylistsScreen} />
-          <Stack.Screen name="Profile" component={Profile} /> */}
-          <Stack.Screen name="ImagemDetalhes" component={ImagemDetalhes} />
-          <Stack.Screen name="Home" component={Home} /> 
-          {/* <Stack.Screen name="MoodsScreen" component={MoodsScreen} />  */}
-          
-        </Stack.Navigator>
-      </NavigationContainer>
-      </MoodProvider>
-    </SpotifyAuthProvider> 
+    <ThemeProvider>
+      <SpotifyAuthProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            screenOptions={{ headerShown: false }}
+            initialRouteName="Login"
+          >
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="SpotifyCallback" component={SpotifyCallback} />
+            <Stack.Screen name="Playlists" component={PlaylistsScreen} />
+            <Stack.Screen name="Profile" component={Profile} />
+            <Stack.Screen name="ImagemDetalhes" component={ImagemDetalhes} />
+            <Stack.Screen name="MoodsScreen" component={MoodsScreen} />
+
+            {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SpotifyAuthProvider>
+    </ThemeProvider> 
 
 /* 
 import React from "react";
@@ -101,6 +102,5 @@ export default function App() {
       </NavigationContainer>
     </ThemeProvider>
 		*/ 
-
   );
 }

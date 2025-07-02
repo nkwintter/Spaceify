@@ -13,6 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { useMood } from '../../contexts/moodContexts'
+import BlobButton from '../../components/BlobButton';
 
 
 type ImagemFavorita = {
@@ -187,7 +188,10 @@ useEffect(() => {
         </TouchableOpacity>
       )}
 
-      <SpotifyButton />
+      <BlobButton label="Texto"
+                  onPress={() => {/* função em breve */}}
+                  colors={['#cor1', '#cor2']} 
+                  BlobComponent = {Text}  />
 
       <View style={styles.moodContainer}>
         <Text style={styles.moodLabel}>Mood Atual</Text>

@@ -7,7 +7,7 @@ import { BtnGerarPlaylistAstral } from '../../components/PlaylistsScreen/btnGera
 export function PlaylistsScreen() {
 
     //para testes...
-    const playlists = [
+    const playlists: string | ArrayLike<any> | null | undefined = [
         // 'Playlist 1',
         // 'Playlist 2',
     ]
