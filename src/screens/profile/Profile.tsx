@@ -197,9 +197,6 @@ const Profile = () => {
         <Text style={styles.avancadoTexto}> Mudar idioma</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.avancado}>
-        <Text style={styles.avancadoTexto}> Mudar senha</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.avancado}>
         <Text style={styles.avancadoTexto}> Limpar playlists salvas</Text>
       </TouchableOpacity>
 
