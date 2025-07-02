@@ -4,8 +4,8 @@ import { SpotifyAuthProvider } from './src/context/SpotifyAuthContext';
 import LoginScreen from './src/screens/LoginScreen';
 import SpotifyCallback from '../Spaceify/src/callback/Spotify/SpotifyCallback';
 import Profile from './src/screens/profile/Profile';
-import { ThemeProvider } from './src/context/ThemeContext';
-// import HomeScreen from './src/screens/HomeScreen';
+import { ThemeProvider } from './src/context/ThemeContext'; 
+import Home from './src/screens/Home/home';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { MoodProvider } from './src/contexts/moodContexts';
@@ -22,10 +22,11 @@ export default function App() {
   return (
     <ThemeProvider>
       <SpotifyAuthProvider>
+         <MoodProvider>
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{ headerShown: false }}
-            initialRouteName="Login"
+            initialRouteName="Home"
           >
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="SpotifyCallback" component={SpotifyCallback} />
@@ -34,9 +35,10 @@ export default function App() {
             <Stack.Screen name="ImagemDetalhes" component={ImagemDetalhes} />
             <Stack.Screen name="MoodsScreen" component={MoodsScreen} />
 
-            {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
+             <Stack.Screen name="Home" component={Home} /> 
           </Stack.Navigator>
         </NavigationContainer>
+       </MoodProvider>
       </SpotifyAuthProvider>
     </ThemeProvider> 
 
