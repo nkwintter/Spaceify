@@ -24,7 +24,7 @@ import Blob08 from "../assets/blob08.svg";
 import Blob09 from "../assets/blob09.svg";
 import Blob10 from "../assets/blob10.svg";
 import { RootStackParamList } from "../navigation/types";
-import BottomNav from "../components/BottomNav";
+
 
 
 
@@ -166,7 +166,7 @@ export default function MoodsScreen() {
           );
         })}
       </ScrollView>
-      <BottomNav />
+     
     </SafeAreaView>
   );
 }
