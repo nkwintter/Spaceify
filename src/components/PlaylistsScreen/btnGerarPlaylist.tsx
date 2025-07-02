@@ -18,27 +18,39 @@ export function BtnGerarPlaylistAstral({ onStart, onFinish }: Props) {
   const handlePress = async () => {
     onStart?.();
 
-    try {
-      const saved = await AsyncStorage.getItem('@ultima_escolha');
-      if (!saved) {
-        console.warn('Nenhuma escolha de imagem/mood encontrada.');
-        return;
-      }
+    // try {
+    //   const saved = await AsyncStorage.getItem('@ultima_escolha');
+    //   if (!saved) {
+    //     console.warn('Nenhuma escolha de imagem/mood encontrada.');
+    //     return;
+    //   }
 
-      const { mood, imageTitle, imageUrl } = JSON.parse(saved);
 
-      await handleCreatePlaylist({
-        mood,
-        imageTitle,
-        imageUrl,
-        user,
-        token,
-      });
-    } catch (error) {
-      console.error('Erro ao gerar playlist:', error);
-    } finally {
-      onFinish?.();
-    }
+
+    //   const { mood, imageTitle, imageUrl } = JSON.parse(saved);
+
+    //   await handleCreatePlaylist({
+    //     mood,
+    //     imageTitle,
+    //     imageUrl,
+    //     user,
+    //     token,
+    //   });
+    // } catch (error) {
+    //   console.error('Erro ao gerar playlist:', error);
+    // } finally {
+    //   onFinish?.();
+    // }
+
+    await handleCreatePlaylist({
+      mood: 'enérgico',
+      imageTitle: 'Nebulosa do Demonio',
+      imageUrl: '',
+      user,
+      token,
+    })
+
+    onFinish?.();
   };
 
   return (

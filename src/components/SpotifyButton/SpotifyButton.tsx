@@ -18,7 +18,7 @@ export default function SpotifyButton({ mood, imageTitle }: SpotifyButtonProps) 
       return;
     }
 
-    await handleCreatePlaylist({ mood, imageTitle, user, token });
+    // await handleCreatePlaylist({ mood, imageTitle, user, token });
   };
 
   return (

@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { BtnGerarPlaylistAstral } from '../../components/PlaylistsScreen/btnGerarPlaylist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+// import BottomNav from '../../components/BottomNav';
 
 export interface PlaylistItem {
     title: string;
@@ -67,6 +68,7 @@ export function PlaylistsScreen() {
                     />
                 </View>
             )}
+            {/* <BottomNav/> */}
         </LinearGradient>
     );
 }

@@ -20,13 +20,17 @@ import Blob04 from "../assets/blob04.svg";
 import Blob05 from "../assets/blob05.svg";
 import Blob06 from "../assets/blob06.svg";
 import Blob07 from "../assets/blob07.svg";
+import Blob08 from "../assets/blob08.svg";
+import Blob09 from "../assets/blob09.svg";
+import Blob10 from "../assets/blob10.svg";
 import { RootStackParamList } from "../navigation/types";
+import BottomNav from "../components/BottomNav";
 
 
 
 const blobComponents = [
   Blob01, Blob02, Blob03, Blob04, Blob05, Blob06, Blob07,
-  Blob01, Blob02, Blob03,
+  Blob08, Blob09, Blob10,
 ];
 
 // Categorias fixas para filtro
@@ -93,7 +97,7 @@ export default function MoodsScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>Escolha uma categoria</Text>
+          <Text style={styles.title}>MOODS</Text>
         </View>
         <ScrollView contentContainerStyle={styles.blobContainer}>
           {categorias.map((categoria, i) => {
@@ -102,7 +106,6 @@ export default function MoodsScreen() {
               <View style={styles.blobWrapper} key={categoria}>
                 <BlobButton
                   label={categoria}
-                  colors={["#5f2c82", "#49a09d"]}
                   BlobComponent={BlobComponent}
                   onPress={() => setCategoriaSelecionada(categoria)}
                 />
@@ -138,7 +141,6 @@ export default function MoodsScreen() {
               <View style={styles.blobWrapper} key={label + index}>
                 <BlobButton
                   label={label}
-                  colors={["#5f2c82", "#49a09d"]}
                   BlobComponent={BlobComponent}
                   onPress={() =>
                     navigation.navigate("Details", {
@@ -151,7 +153,20 @@ export default function MoodsScreen() {
             );
           })
         )}
+        {categorias.map((label, index) => {
+          const BlobComponent = blobComponents[index % blobComponents.length];
+          return (
+            <View style={styles.blobWrapper} key={label}>
+              <BlobButton
+                label={label}
+                BlobComponent={BlobComponent}
+                onPress={() => navigation.navigate("Playlist")}
+              />
+            </View>
+          );
+        })}
       </ScrollView>
+      <BottomNav />
     </SafeAreaView>
   );
 }

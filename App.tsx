@@ -14,6 +14,7 @@ import { MoodProvider } from './src/contexts/moodContexts';
 import ImagemDetalhes from './src/screens/ImagemDetalhes/imagemDetalhes';
 import { PlaylistsScreen } from './src/screens/playlistScreen';
 import MoodsScreen from './src/screens/MoodsScreen';
+import { BottomTabsNavigator } from './src/navigation/BottomTabsNavigator';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,16 +35,15 @@ export default function App() {
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{ headerShown: false }}
-            initialRouteName="Home"
+            initialRouteName='Home'
           >
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="SpotifyCallback" component={SpotifyCallback} />
+            {/* <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="SpotifyCallback" component={SpotifyCallback} /> */}
             <Stack.Screen name="Playlists" component={PlaylistsScreen} />
-            <Stack.Screen name="Profile" component={Profile} />
+            {/* <Stack.Screen name="Profile" component={Profile} />
             <Stack.Screen name="ImagemDetalhes" component={ImagemDetalhes} />
-            <Stack.Screen name="MoodsScreen" component={MoodsScreen} />
-
-             <Stack.Screen name="Home" component={Home} /> 
+            <Stack.Screen name="MoodsScreen" component={MoodsScreen} /> */}
+            <Stack.Screen name="Home" component={BottomTabsNavigator} /> 
           </Stack.Navigator>
         </NavigationContainer>
        </MoodProvider>

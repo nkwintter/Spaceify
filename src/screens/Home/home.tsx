@@ -14,6 +14,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { useMood } from '../../contexts/moodContexts'
 import BlobButton from '../../components/BlobButton';
+// import BottomNav from '../../components/BottomNav';
 
 
 type ImagemFavorita = {
@@ -188,10 +189,10 @@ useEffect(() => {
         </TouchableOpacity>
       )}
 
-      <BlobButton label="Texto"
-                  onPress={() => {/* função em breve */}}
+      {/* <BlobButton label="Texto"
+                  onPress={() => {/* função em breve }}
                   colors={['#cor1', '#cor2']} 
-                  BlobComponent = {Text}  />
+                  BlobComponent = {Text}  /> */}
 
       <View style={styles.moodContainer}>
         <Text style={styles.moodLabel}>Mood Atual</Text>
@@ -221,6 +222,7 @@ useEffect(() => {
         showsHorizontalScrollIndicator={false}
         />
     </ScrollView>
+    {/* <BottomNav/> */}
     </SafeAreaView>
     </GradienteAnimado>
   );
