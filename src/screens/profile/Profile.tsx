@@ -123,6 +123,37 @@ const Profile = () => {
     }
   };
 
+  // ESTADO FAVORITES
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  useEffect(() => {
+    // FUNÇÃO QUE CARREGA OS FAVORITOS SALVOS NO ASYNCSTORAGE
+    const loadFavorites = async () => {
+      const storedFavorites = await AsyncStorage.getItem('favorites');
+      if (storedFavorites) {
+        setFavorites(JSON.parse(storedFavorites));
+      }
+    };
+
+  // EXECUTA UMA VEZ AO INICIAR
+  loadFavorites();
+  }, []);
+
+  // FUNÇÃO PARA LIMPAR AS PLAYLISTS FAVORITAS
+  const handleClearFavorites = async () => {
+    // REMOVE DO ARMAZENAMENTO DA ASYNCSTORAGE
+    try {
+      await AsyncStorage.removeItem('favorites'); 
+      // LIMPA O ESTADO
+      setFavorites([]);
+      Alert.alert("Sucesso", "Sem playlists favoritas!");
+    } catch (error) {
+      Alert.alert("Erro", "Falha ao limpar as playlists favoritas.");
+      console.error(error);
+    }
+  };
+
+
   // FICA MAIS INTUITIVO ORGANIZAR O MEU CSS COM ALGUNS COMANDOS EM PORTUGÊS,
   // PARA ASSIMILAÇÃO, NÃO ESTRANHEM KK
   return (
@@ -168,15 +199,15 @@ const Profile = () => {
 
       {/* PLAYLISTS FAVORITAS */}
       <Text style={styles.title}>Minhas Playlists Favoritas</Text>
-      <View style={styles.playlistCard}>
-        <View style={styles.playlistInfo}>
-          <Text style={styles.playlistName}></Text>
-          <View style={styles.playlistButtons}>
-            <TouchableOpacity></TouchableOpacity>
-            <TouchableOpacity></TouchableOpacity>
-          </View>
-        </View>
+      {favorites.length > 0 ? (
+      favorites.map((item, index) => (
+      <View key={index} style={styles.playlistCard}>
+        <Text style={styles.playlistName}>{item}</Text>
       </View>
+      ))
+      ) : (
+      <Text style={styles.statusTexto}>Nenhuma playlist favorita ainda</Text>
+      )}
 
       {/* ESTATÍSTICAS PESSOAIS */}
       <Text style={styles.title}>Estatísticas Pessoais</Text>
@@ -196,8 +227,8 @@ const Profile = () => {
       <TouchableOpacity style={styles.avancado}>
         <Text style={styles.avancadoTexto}> Mudar idioma</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.avancado}>
-        <Text style={styles.avancadoTexto}> Limpar playlists salvas</Text>
+      <TouchableOpacity style={styles.avancado} onPress={handleClearFavorites}>
+        <Text style={styles.avancadoTexto}> Limpar playlists favoritas</Text>
       </TouchableOpacity>
 
       {/* MODAL EDIÇÃO */}
