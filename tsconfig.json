@@ -17,11 +17,14 @@
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx"
+    "types": ["react-native-svg", "node"]
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    "src/context/SpotifyAuthContext"
+    "src/context/SpotifyAuthContext",
+    "src", 
+    "svg.d.ts"
   ],
   "exclude": [
     "node_modules"
