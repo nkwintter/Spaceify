@@ -15,9 +15,14 @@ import { useSpotifyAuth } from "../../context/SpotifyAuthContext";
 import RNHTMLtoPDF from "react-native-html-to-pdf";
 import * as FileSystem from "expo-file-system";
 import { useNavigation } from "@react-navigation/native";
-import styles from "./profile.styles";
+import { getStyles } from "./profile.styles";
+import { useTheme } from '../../context/ThemeContext';
 
 const Profile = () => {
+  // USANDO HOOK DO CONTEXT
+  const { theme, toggleTheme } = useTheme();
+  const styles = getStyles(theme);
+
   // USANDO HOOK DO CONTEXT
   const { user, logout } = useSpotifyAuth();
 
@@ -183,8 +188,8 @@ const Profile = () => {
 
       {/* AÇÕES RÁPIDAS */}
       <View style={styles.acoes}>
-        <TouchableOpacity style={styles.acaoBotao}>
-          <Text style={styles.acaoTexto}> Alternar Tema</Text>
+        <TouchableOpacity style={styles.acaoBotao} onPress={toggleTheme}>
+          <Text style={styles.acaoTexto}> Alternar Tema (atual: {theme})</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.acaoBotao}
