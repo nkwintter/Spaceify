@@ -8,26 +8,40 @@ import {
   TextInput,
   Modal,
   Alert,
+  SafeAreaView,
+  ImageBackground,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSpotifyAuth } from "../../context/SpotifyAuthContext";
-import RNHTMLtoPDF from "react-native-html-to-pdf";
 import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 import { useNavigation } from "@react-navigation/native";
-import styles from "./profile.styles";
+import { getStyles } from "./profile.styles";
+import { useTheme } from "../../context/ThemeContext";
+import { Feather } from "@expo/vector-icons";
 
 const Profile = () => {
   // USANDO HOOK DO CONTEXT
+  const { theme, toggleTheme } = useTheme();
+  const styles = getStyles(theme);
+
+  // USANDO HOOK DO CONTEXT
   const { user, logout } = useSpotifyAuth();
+
+  // CARREGAR DAS PLAYLISTS GERADAS
+  const [playlistsGeradas, setPlaylistsGeradas] = useState<any[]>([]);
+  const [moodMaisRecorrente, setMoodMaisRecorrente] = useState("");
+  const [ultimaImagem, setUltimaImagem] = useState("");
 
   // NAVEGAÇÃO ENTRE TELAS PARA REDIRECIONAR LOGOUT PARA LOGIN
   const navigation = useNavigation<any>();
 
-  // ESTADOS EDITÁVEIS E MODAL PARA EDITAR PERFIL
+  // ESTADOS EDITÁVEIS E MODAL PARA EDITAR PERFIL, CONFIGURAÇÕES
   const [customName, setCustomName] = useState("");
   const [customAvatar, setCustomAvatar] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // CARREGAR DADOS DO ASYNCSTORAGE POSSIBILITANDO CARREGAR ALTERAÇÕES
   useEffect(() => {
@@ -46,7 +60,7 @@ const Profile = () => {
   // CASO NÃO POSSUA NADA, RETORNA PADRÃO.
   const nameToShow = customName || user?.display_name || "Astronauta";
   const avatarToShow = customAvatar || user?.images?.[0]?.url || null;
-  const emailToShow = user?.email || ""; 
+  const emailToShow = user?.email || "";
 
   // CARREGAR IMAGEM DO USUÁRIO PARA EDIÇÃO
   const pickImage = async () => {
@@ -81,12 +95,9 @@ const Profile = () => {
   // CARREGA LOGOUT DO CONTEXTO
   const handleLogout = async () => {
     await logout();
-    // LIMPA TAMBÉM AS PERSONALIZAÇÕES LOCAIS
-    await AsyncStorage.multiRemove(["customName", "customAvatar"]);
     // VAI PARA A TELA DE LOGIN
-    navigation.replace("Login"); 
+    navigation.replace("Login");
   };
-
 
   // FUNÇÃO PARA EXPORTAR PDF
   const handleExportPDF = async () => {
@@ -94,32 +105,22 @@ const Profile = () => {
     const nameToShow = customName || user?.display_name || "Astronauta";
     const emailToShow = user?.email || "Email não disponível";
 
-    // DOCUMENTO QUE SERÁ CONVERTIDO EM PDF
-    const htmlContent = `
-    <h1>Spaceify - Perfil do Astronauta</h1>
-    <p><strong>Nome:</strong> ${nameToShow}</p>
-    <p><strong>Email:</strong> ${emailToShow}</p>
-    <p><strong>Exportado em:</strong> ${new Date().toLocaleString()}</p>
+    // DOCUMENTO QUE SERÁ EXPORTADO
+    const content = `
+    Spaceify - Perfil do Astronauta\n
+    Nome: ${nameToShow}\n
+    Email: ${emailToShow}\n
+    Exportado em: ${new Date().toLocaleString()}
   `;
 
-    // DOCUMENTO QUE SERÁ CONVERTIDO EM PDF
-    // NOME DO DOCUMENTO
-    // ONDE SERÁ SALVO
-    try {
-      const options = {
-        html: htmlContent,
-        fileName: "Perfil_Spaceify",
-        directory: "Documents",
-      };
+    const fileUri = FileSystem.documentDirectory + "perfil_spaceify.txt";
 
-      // FILE CAMINHO DO PDF GERADO
-      // RNHTML VEM DO PACOTE IMPORTADO QUE TRANSFORMARÁ O ARQUIVO EM PDF
-      const file = await RNHTMLtoPDF.convert(options);
-      Alert.alert("Sucesso", `PDF salvo em:\n${file.filePath}`);
-      console.log("PDF criado em:", file.filePath);
+    try {
+      await FileSystem.writeAsStringAsync(fileUri, content);
+      await Sharing.shareAsync(fileUri);
     } catch (error) {
-      Alert.alert("Erro", "Não foi possível exportar o PDF");
-      console.error(error);
+      Alert.alert("Erro", "Não foi possível compartilhar");
+      console.error("Erro ao exportar:", error);
     }
   };
 
@@ -129,21 +130,21 @@ const Profile = () => {
   useEffect(() => {
     // FUNÇÃO QUE CARREGA OS FAVORITOS SALVOS NO ASYNCSTORAGE
     const loadFavorites = async () => {
-      const storedFavorites = await AsyncStorage.getItem('favorites');
+      const storedFavorites = await AsyncStorage.getItem("favorites");
       if (storedFavorites) {
         setFavorites(JSON.parse(storedFavorites));
       }
     };
 
-  // EXECUTA UMA VEZ AO INICIAR
-  loadFavorites();
+    // EXECUTA UMA VEZ AO INICIAR
+    loadFavorites();
   }, []);
 
   // FUNÇÃO PARA LIMPAR AS PLAYLISTS FAVORITAS
   const handleClearFavorites = async () => {
     // REMOVE DO ARMAZENAMENTO DA ASYNCSTORAGE
     try {
-      await AsyncStorage.removeItem('favorites'); 
+      await AsyncStorage.removeItem("favorites");
       // LIMPA O ESTADO
       setFavorites([]);
       Alert.alert("Sucesso", "Sem playlists favoritas!");
@@ -153,83 +154,189 @@ const Profile = () => {
     }
   };
 
+  // CARREGAR ESTATÍSTICAS AO ABRIR O APP
+  useEffect(() => {
+    const carregarEstatisticas = async () => {
+      const data = await AsyncStorage.getItem("playlistsGeradas");
+      if (data) {
+        const parsed = JSON.parse(data);
+        setPlaylistsGeradas(parsed);
+
+        if (parsed.length > 0) {
+          const ultima = parsed[parsed.length - 1];
+          setUltimaImagem(ultima.imageTitle);
+
+          const contagem: Record<string, number> = {};
+          parsed.forEach((p: any) => {
+            contagem[p.mood] = (contagem[p.mood] || 0) + 1;
+          });
+
+          const maisRecorrente = Object.entries(contagem).reduce((a, b) =>
+            a[1] > b[1] ? a : b
+          )[0];
+
+          setMoodMaisRecorrente(maisRecorrente);
+        }
+      }
+    };
+
+    carregarEstatisticas();
+  }, []);
 
   // FICA MAIS INTUITIVO ORGANIZAR O MEU CSS COM ALGUNS COMANDOS EM PORTUGÊS,
   // PARA ASSIMILAÇÃO, NÃO ESTRANHEM KK
   return (
-    <ScrollView style={styles.container}>
-      {/* CABEÇALHO */}
-      <Text style={styles.inicio}>Olá, Astronauta</Text>
+    <View style={{ flex: 1 }}>
+      {/* MANCHAS DE FUNDO */}
+      <View style={styles.manchasContainer}>
+        <View style={styles.manchaRoxa} />
+        <View style={styles.manchaAzul} />
+      </View>
 
-      {/* AVATAR */}
-      <View style={styles.avatarSessao}>
-        {avatarToShow ? (
-          <Image source={{ uri: avatarToShow }} style={styles.avatar} />
-        ) : (
-          <View style={[styles.avatar, { backgroundColor: "#4E3592" }]} />
-        )}
-
+      {/* LOGOUT */}
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: theme === "dark" ? "#0F0F0F" : "#FFFFFF",
+        }}
+      >
         <TouchableOpacity
-          style={styles.editAvatar}
-          onPress={() => setModalVisible(true)}
+          style={styles.logoutButton}
+          onPress={handleLogout}
+          accessibilityLabel="Botão de Logout"
         >
-          <Text style={{ color: "#fff" }}>✏️</Text>
+          <Feather
+            name="log-out"
+            size={24}
+            color={theme === "dark" ? "#1EBFDB" : "#1E4789"}
+          />
         </TouchableOpacity>
-      </View>
+        <ScrollView style={styles.container}>
+          {/* CABEÇALHO */}
+          <Text style={styles.inicio}>Olá, Astronauta</Text>
 
-      {/* INFORMAÇÕES */}
-      <Text style={styles.name}>{nameToShow}</Text>
-      <Text style={styles.email}>{emailToShow}</Text>
+          {/* AVATAR */}
+          <View style={styles.avatarSessao}>
+            {avatarToShow ? (
+              <Image source={{ uri: avatarToShow }} style={styles.avatar} />
+            ) : (
+              <View style={[styles.avatar, { backgroundColor: "#4E3592" }]} />
+            )}
 
-      {/* AÇÕES RÁPIDAS */}
-      <View style={styles.acoes}>
-        <TouchableOpacity style={styles.acaoBotao}>
-          <Text style={styles.acaoTexto}> Alternar Tema</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.acaoBotao}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.acaoTexto}> Editar Perfil</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.acaoBotao} onPress={handleLogout}>
-          <Text style={styles.acaoTexto}> Logout</Text>
-        </TouchableOpacity>
-      </View>
+            <TouchableOpacity
+              style={styles.editAvatar}
+              onPress={() => setModalVisible(true)}
+              accessibilityLabel="Editar Avatar"
+            >
+              <Feather
+                name="edit"
+                size={18}
+                color={theme === "dark" ? "#FFFFFF" : "#0F0F0F"}
+              />
+            </TouchableOpacity>
+          </View>
 
-      {/* PLAYLISTS FAVORITAS */}
-      <Text style={styles.title}>Minhas Playlists Favoritas</Text>
-      {favorites.length > 0 ? (
-      favorites.map((item, index) => (
-      <View key={index} style={styles.playlistCard}>
-        <Text style={styles.playlistName}>{item}</Text>
-      </View>
-      ))
-      ) : (
-      <Text style={styles.statusTexto}>Nenhuma playlist favorita ainda</Text>
+          {/* INFORMAÇÕES */}
+          <Text style={styles.name}>{nameToShow}</Text>
+          <Text style={styles.email}>{emailToShow}</Text>
+
+          {/* AÇÕES RÁPIDAS E ESTATÍSTICAS */}
+          <ImageBackground
+          source={require('../../../assets/fundo1.jpg')}
+          style={styles.boxContainer}
+          imageStyle={{ borderRadius: 16 }}
+          >
+            {/* AÇÕES RÁPIDAS */}
+            <Text style={styles.boxTitle}>Ações Rápidas</Text>
+            <View>
+              <TouchableOpacity
+                style={[styles.acaoBotao, { marginBottom: 10 }]}
+                onPress={() => setModalVisible(true)}
+                accessibilityLabel="Editar Perfil"
+              >
+                <Text style={styles.acaoTexto}>Editar Perfil</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.acaoBotao}
+                onPress={handleLogout}
+                accessibilityLabel="Logout"
+              >
+                <Text style={styles.acaoTexto}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* ESTATÍSTICAS PESSOAIS */}
+            <Text style={[styles.boxTitle, { marginTop: 24 }]}>
+              Estatísticas Pessoais
+            </Text>
+            <View>
+              <Text
+                style={[styles.statusTexto, { color: "#B3D4F9", marginBottom: 8 }]}
+              >
+                TOTAL DE PLAYLISTS: {playlistsGeradas.length}
+              </Text>
+              <Text
+                style={[styles.statusTexto, { color: "#B3D4F9", marginBottom: 8 }]}
+              >
+                ÚLTIMA IMAGEM: {ultimaImagem || "🎧"}
+              </Text>
+              <Text style={[styles.statusTexto, { color: "#B3D4F9" }]}>
+                MOOD MAIS RECORRENTE: {moodMaisRecorrente || "Exploração Cósmica"}
+              </Text>
+            </View>
+          </ImageBackground>
+
+          {/* PLAYLISTS FAVORITAS */}
+          <Text style={styles.title}>Playlists Favoritas</Text>
+          {favorites.length > 0 ? (
+            favorites.map((item, index) => (
+              <View key={index} style={styles.playlistCard}>
+                <Image
+                  source={{
+                    uri: "https://cdn-icons-png.flaticon.com/512/8598/8598143.png",
+                  }}
+                  style={styles.playlistImg}
+                />
+                <Text style={styles.playlistName}>{item}</Text>
+                <TouchableOpacity>
+                  <Text style={{ color: "#fff" }}>👁</Text>
+                </TouchableOpacity>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.statusTexto}>Nenhuma playlist favorita ainda</Text>
+          )}
+
+          {/* EXPORTAR PERFIL */}
+          <TouchableOpacity style={styles.exportarBotao} onPress={handleExportPDF}>
+            <Text style={styles.exportarTexto}>EXPORTAR PDF</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
+
+      {/* BOTÃO DE ENGENHAGEM FIXO */}
+      <TouchableOpacity
+        style={styles.botaoEngrenagem}
+        onPress={() => setShowSettings(!showSettings)}
+        accessibilityLabel="Botão de configurações"
+      >
+        <Feather
+          name="settings"
+          size={24}
+          color={theme === "dark" ? "#0F0F0F" : "#FFFFFF"}
+        />
+      </TouchableOpacity>
+
+      {showSettings && (
+        <View style={styles.menuConfig}>
+          <TouchableOpacity style={styles.menuItem} onPress={toggleTheme}>
+            <Text style={styles.menuText}>Alternar Tema</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.menuItem} onPress={handleClearFavorites}>
+            <Text style={styles.menuText}>Limpar Playlists Favoritas</Text>
+          </TouchableOpacity>
+        </View>
       )}
-
-      {/* ESTATÍSTICAS PESSOAIS */}
-      <Text style={styles.title}>Estatísticas Pessoais</Text>
-      <View style={styles.status}>
-        <Text style={styles.statusTexto}> Total de playlists </Text>
-        <Text style={styles.statusTexto}> Mood mais recorrente </Text>
-        <Text style={styles.statusTexto}> Última imagem </Text>
-      </View>
-
-      {/* EXPORTAR PERFIL */}
-      <TouchableOpacity style={styles.exportarBotao} onPress={handleExportPDF}>
-        <Text style={styles.exportarTexto}> Exportar Perfil (PDF)</Text>
-      </TouchableOpacity>
-
-      {/* CONFIGURAÇÕES AVANÇADAS */}
-      <Text style={styles.title}>Configurações Avançadas</Text>
-      <TouchableOpacity style={styles.avancado}>
-        <Text style={styles.avancadoTexto}> Mudar idioma</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.avancado} onPress={handleClearFavorites}>
-        <Text style={styles.avancadoTexto}> Limpar playlists favoritas</Text>
-      </TouchableOpacity>
 
       {/* MODAL EDIÇÃO */}
       <Modal visible={modalVisible} animationType="slide" transparent>
@@ -241,9 +348,7 @@ const Profile = () => {
             padding: 20,
           }}
         >
-          <View
-            style={{ backgroundColor: "#fff", padding: 20, borderRadius: 12 }}
-          >
+          <View style={{ backgroundColor: "#fff", padding: 20, borderRadius: 12 }}>
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>Editar Nome</Text>
             <TextInput
               placeholder="Novo nome"
@@ -266,7 +371,7 @@ const Profile = () => {
           </View>
         </View>
       </Modal>
-    </ScrollView>
+    </View>
   );
 };
 
