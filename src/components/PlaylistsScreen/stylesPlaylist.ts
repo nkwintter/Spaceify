@@ -6,7 +6,7 @@ export const cardPlaylist = StyleSheet.create({
         marginVertical: 10,
         borderRadius: 10,
         backgroundColor: '#5e34d2b4',
-        padding: 5,
+        padding: 10,
         flexDirection: 'row',
         borderTopRightRadius: 50,
         borderEndEndRadius: 50,
@@ -14,9 +14,9 @@ export const cardPlaylist = StyleSheet.create({
     },
 
     img:{
-        margin: 5,
-        width: 65,
-        height: 65,
+        marginRight: 5,
+        width: 80,
+        height: 80,
         borderRadius: 5,
     },
 
@@ -29,13 +29,26 @@ export const cardPlaylist = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         color: '#fff',
-        marginVertical: 5,
+        marginVertical: 3,
     },
 
     descriptionTxt: {
         fontSize: 15,
         color: '#fff',
-    }
+    },
+    
+    linkTxtBase: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        color: '#fff'
+    },
+
+    linkTxt: {
+        color: '#69e7b8',
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginRight: 5,
+    },
 
 })
 
@@ -60,7 +73,6 @@ export const btnGerarPlaylist = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         color: '#fff',
-        
     },
 
     icon:{

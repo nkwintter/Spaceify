@@ -7,6 +7,9 @@ import SpotifyCallback from '../Spaceify/src/callback/Spotify/SpotifyCallback';
 import Profile from './src/screens/profile/Profile';
 // import HomeScreen from './src/screens/HomeScreen';
 
+import { useEffect } from 'react';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import ImagemDetalhes from './src/screens/ImagemDetalhes/imagemDetalhes';
 import { PlaylistsScreen } from './src/screens/playlistScreen';
@@ -16,8 +19,14 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
 
-
   return (
+    // LIMPAR ASYNCSTORAGE:
+    // useEffect(() => {
+    //   AsyncStorage.clear().then(() => {
+    //     console.log('🔁 AsyncStorage limpo com sucesso');
+    //   });
+    // }, [])
+
     <SpotifyAuthProvider>
       <NavigationContainer>
         <Stack.Navigator
@@ -34,3 +43,7 @@ export default function App() {
     </SpotifyAuthProvider> 
   );
 }
+
+
+
+
