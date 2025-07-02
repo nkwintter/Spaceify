@@ -13,7 +13,7 @@ export const handleCreatePlaylist = ({ mood, imageTitle }: Props) => {
   const handleGenerate = async () => {
     try {
       
-      const response = await axios.post('http://localhost:3001/generate-playlist', {
+      const response = await axios.post('http://192.168.1.51:3001/generate-playlist', {
         mood,
         imageTitle
       });
@@ -21,7 +21,7 @@ export const handleCreatePlaylist = ({ mood, imageTitle }: Props) => {
       //lista com as músicas [{name: , artist: }...]
       const tracks = response.data; 
 
-      const playlistResponse = await axios.post('http://localhost:3001/create-user-playlist', {
+      const playlistResponse = await axios.post('http://192.168.1.51:3001/create-user-playlist', {
         tracks,
         playlistName: `${mood} - ${imageTitle}`,
         user_id: user?.id,
