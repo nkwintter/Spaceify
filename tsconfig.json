@@ -1,6 +1,9 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "esModuleInterop": true,
+    "jsx": "react-native",
+    "types": ["react-native-svg", "node"]
+    },
+  "include": ["src", "svg.d.ts"]
 }
