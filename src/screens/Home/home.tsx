@@ -25,6 +25,11 @@ type RootStackParamList = {
   ImagemDetalhes: undefined;
 };
 
+type Props = {
+  navigation: HomeNavigationProp;
+  route: any;
+}
+
 type HomeNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 
@@ -41,11 +46,13 @@ function formatDate(dateString: string): string {
 }
 
 
-export default function Home({ navigation }: { navigation: HomeNavigationProp }) {
+export default function Home() {
+  console.log('🏠 Home component renderizou');
 const [dados, setDados] = useState<ImageData | null>(null);
 const [loading, setLoading] = useState(true);
 const [error, setError] = useState<string | null>(null);
 const [expanded, setExpanded] = useState(false);
+const navigation = useNavigation<HomeNavigationProp>();
 
 const handlePress = () => {
     navigation.navigate('ImagemDetalhes'); 
@@ -89,25 +96,18 @@ const trocarMood = () => {
 const [favoritos, setFavoritos] = useState<ImagemFavorita[]>([]);
 
 useEffect(() => {
-  const carregarFavoritos = async () => {
+  async function getApodDodia() {
     try {
-      const dados = await AsyncStorage.getItem('@imagens_favoritas');
-      if (dados) {
-        setFavoritos(JSON.parse(dados));
-      }
-    } catch (e) {
-      console.log('Erro ao carregar favoritos:', e);
-    }
-  };
-  
-  carregarFavoritos();
-}, []);
-
-useEffect(() => {
-  async function getApod() {
-    try {
-      const dadosApod = await fetchApodList();
-
+      // URL da API da NASA APOD para hoje
+      const API_KEY = 'p0Q4koCNEvHZ54CmGHqh7jkc5h2sUvyaP0Cyjhj5'; // ou use 'DEMO_KEY' para testes
+      const today = new Date().toISOString().split('T')[0]; // formato YYYY-MM-DD
+      
+      const response = await fetch(
+        `https://api.nasa.gov/planetary/apod?api_key=${API_KEY}&date=${today}`
+      );
+      
+      const dadosApod = await response.json()
+      
       if (dadosApod.media_type === 'image') {
         setDados({
           url: dadosApod.hdurl || dadosApod.url,
@@ -123,18 +123,18 @@ useEffect(() => {
           date: dadosApod.date,
         });
       } else {
-        setError('Conteúdo da NASA não é uma imagem');
+        setError('Conteúdo de hoje não é uma imagem');
       }
-    } catch {
-      setError('Erro ao carregar dados da NASA.');
+    } catch (err) {
+      console.log('❌ Erro ao buscar APOD:', err);
+      setError('Erro ao carregar imagem do dia da NASA.');
     } finally {
       setLoading(false);
     }
   }
 
-  getApod();
+  getApodDodia();
 }, []);
-
 
   if (loading) {
     return (
@@ -202,8 +202,8 @@ useEffect(() => {
 
      
       <Text style={styles.favoritesTitle}>Imagens Favoritas Recentes</Text>
-      <FlatList
-        data={favoritos}
+      <FlatList<ImagemFavorita>
+        data={favoritos || []}
         keyExtractor={(item) => item.url}
         renderItem={({ item }) => (
          <TouchableOpacity onPress={handlePress}>

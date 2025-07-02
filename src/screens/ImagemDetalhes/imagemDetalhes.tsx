@@ -27,7 +27,6 @@ const FAVORITO_KEY = '@imagens_favoritas';
 export default function ImagemDetalhes() {
   const route = useRoute();
   const { item } = route.params as { item: ImageData };
-
   const [data, setData] = useState<ImageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

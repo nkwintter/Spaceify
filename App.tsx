@@ -20,20 +20,23 @@ export default function App() {
 
   return (
     <SpotifyAuthProvider>
+      <MoodProvider>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{ headerShown: false }}
-          initialRouteName="Login"
+          initialRouteName="Home"
         >
-          <Stack.Screen name="Login" component={LoginScreen} />
+          {/* <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="SpotifyCallback" component={SpotifyCallback} />
           <Stack.Screen name="Playlists" component={PlaylistsScreen} />
-          <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="Profile" component={Profile} /> */}
           <Stack.Screen name="ImagemDetalhes" component={ImagemDetalhes} />
-          <Stack.Screen name="MoodsScreen" component={MoodsScreen} />
           <Stack.Screen name="Home" component={Home} /> 
+          {/* <Stack.Screen name="MoodsScreen" component={MoodsScreen} />  */}
+          
         </Stack.Navigator>
       </NavigationContainer>
+      </MoodProvider>
     </SpotifyAuthProvider> 
 
 /* 
