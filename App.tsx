@@ -23,7 +23,7 @@ export default function App() {
     // LIMPAR ASYNCSTORAGE:
     // useEffect(() => {
     //   AsyncStorage.clear().then(() => {
-    //     console.log('🔁 AsyncStorage limpo com sucesso');
+    //     console.log('AsyncStorage limpo com sucesso');
     //   });
     // }, [])
 
