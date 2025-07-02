@@ -27,8 +27,3 @@
   ],
   "extends": "expo/tsconfig.base"
 }
-
-    "jsx": "react",
-    "strict": true
-  }
-}
