@@ -4,11 +4,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 interface Props {
   mood: string;
   imageTitle: string;
+  imageUrl: string;
   user: any;
   token: string | null;
 }
 
-export const handleCreatePlaylist = async ({ mood, imageTitle, user, token }: Props) => {
+export const handleCreatePlaylist = async ({ mood, imageTitle, imageUrl, user, token }: Props) => {
   try {
     const response = await axios.post('http://192.168.1.51:3001/generate-playlist', {
       mood,
@@ -28,8 +29,8 @@ export const handleCreatePlaylist = async ({ mood, imageTitle, user, token }: Pr
     // Linking.openURL(playlistUrl);
 
     const newPlaylist = {
-      title: `${imageTitle}`,
-      img: 'https://i.postimg.cc/Y9sHGTx0/A7X-Logo.jpg', // ou algo dinâmico
+      title: imageTitle,
+      img: imageUrl, // ou algo dinâmico
       url: playlistUrl,
     };
 

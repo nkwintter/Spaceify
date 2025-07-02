@@ -5,6 +5,7 @@ import { btnGerarPlaylist } from "./stylesPlaylist";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useSpotifyAuth } from '../../context/SpotifyAuthContext';
 import { handleCreatePlaylist } from '../../services/playlistApi.service';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Props {
   onStart?: () => void;
@@ -15,16 +16,29 @@ export function BtnGerarPlaylistAstral({ onStart, onFinish }: Props) {
   const { user, token } = useSpotifyAuth();
 
   const handlePress = async () => {
-    onStart?.(); 
+    onStart?.();
 
-    await handleCreatePlaylist({
-      mood: 'agitado',
-      imageTitle: 'Nebulosa do carangueijo',
-      user,
-      token,
-    });
+    try {
+      const saved = await AsyncStorage.getItem('@ultima_escolha');
+      if (!saved) {
+        console.warn('Nenhuma escolha de imagem/mood encontrada.');
+        return;
+      }
 
-    onFinish?.(); 
+      const { mood, imageTitle, imageUrl } = JSON.parse(saved);
+
+      await handleCreatePlaylist({
+        mood,
+        imageTitle,
+        imageUrl,
+        user,
+        token,
+      });
+    } catch (error) {
+      console.error('Erro ao gerar playlist:', error);
+    } finally {
+      onFinish?.();
+    }
   };
 
   return (
