@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { lightColors, darkColors } from '../theme/colors';
 import { fonts } from '../theme/fonts';
 import { lightGradients, darkGradients } from '../theme/gradients';
 
+// FORMA DO CONTEXTO, TOGGLETHEME MUDA O TEMA
 interface ThemeContextType {
   theme: any;
   toggleTheme: () => void;
