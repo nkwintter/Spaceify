@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import nebulosa from '../../assets/nebulosa.jpg'; 
 import SpotifyButton from '../../components/SpotifyButton/SpotifyButton';
-import { fetchApod } from '../../services/nasaApiService';
+import { fetchApodList } from '../../services/nasaApiService';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -106,7 +106,7 @@ useEffect(() => {
 useEffect(() => {
   async function getApod() {
     try {
-      const dadosApod = await fetchApod();
+      const dadosApod = await fetchApodList();
 
       if (dadosApod.media_type === 'image') {
         setDados({

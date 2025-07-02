@@ -9,59 +9,54 @@ import {
 } from 'react-native';
 import AnimatedReanimated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRoute } from '@react-navigation/native';
 
 import FavoriteButton from '../../components/FavoriteButton/favoriteButton';
 import ImageTitle from '../../components/ImageTitle/ImageTitle';
 import ImageViewer from '../../components/ImageViewer/ImageViewer';
 import SpotifyButton from '../../components/SpotifyButton/SpotifyButton';
-
 import AnimatedHeader from '../../components/AnimateHeader/AnimateHeader';
-import { fetchApod } from '../../services/nasaApiService';
-import { ImageData } from '../../types/types';
-import { localStyles } from './imagemDetalhesStyle';
 import ButtonBackCateg from '../../components/ButtonBackCateg/ButtonBackCateg';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { localStyles } from './imagemDetalhesStyle';
+import { ImageData } from '../../types/types';
 
 const FAVORITO_KEY = '@imagens_favoritas';
 
 export default function ImagemDetalhes() {
+  const route = useRoute();
+  const { item } = route.params as { item: ImageData };
+
   const [data, setData] = useState<ImageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [favorito, setFavorito] = useState(false);
 
- 
-  useEffect(() => {
-    async function getApod() {
-      try {
-        const apodData = await fetchApod();
-
-        if (apodData.media_type === 'image') {
-          setData({
-            url: apodData.hdurl || apodData.url,
-            title: apodData.title,
-            explanation: apodData.explanation,
-          });
-        } else if (apodData.media_type === 'video' && apodData.thumbnail_url) {
-          setData({
-            url: apodData.thumbnail_url,
-            title: apodData.title,
-            explanation: apodData.explanation,
-          });
-        } else {
-          setError('Conteúdo da NASA não é uma imagem');
-        }
-      } catch {
-        setError('Erro ao carregar dados da NASA.');
-      } finally {
-        setLoading(false);
-      }
+  // Carrega os dados vindos do botão (item)
+useEffect(() => {
+  if (item) {
+    const imageUrl = item.hdurl ?? item.url ?? item.thumbnail_url ?? null;
+    if (!imageUrl) {
+      setError('URL da imagem não encontrada.');
+      setLoading(false);
+      return;
     }
+    setData({
+      url: imageUrl,
+      title: item.title,
+      explanation: item.explanation,
+      date: item.date,
+      media_type: item.media_type,
+    });
+    setLoading(false);
+  } else {
+    setError('Nenhuma imagem foi passada.');
+    setLoading(false);
+  }
+}, [item]);
 
-    getApod();
-  }, []);
-
- 
+  // Verifica se está favoritada
   useEffect(() => {
     async function checkFavorito() {
       if (!data) return;
@@ -73,6 +68,7 @@ export default function ImagemDetalhes() {
     checkFavorito();
   }, [data]);
 
+  // Alterna favorito
   const toggleFavorito = async () => {
     if (!data) return;
     const salvo = await AsyncStorage.getItem(FAVORITO_KEY);
@@ -161,6 +157,7 @@ export default function ImagemDetalhes() {
           </AnimatedReanimated.View>
 
           <SpotifyButton />
+
           <FavoriteButton
             image={data}
             favorito={favorito}
