@@ -37,7 +37,8 @@ const SpotifyCallback: React.FC = () => {
           // Navegar de volta para a tela principal
           navigation.reset({
             index: 0,
-            routes: [{ name: 'Home' as never }],
+            // routes: [{ name: 'Home' as never }],
+            routes: [{ name: 'Playlists' as never }],
           });
 
         } else if (routeParams?.error) {

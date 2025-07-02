@@ -47,7 +47,7 @@ export const SpotifyAuthProvider = ({ children }: { children: React.ReactNode })
     tokenEndpoint: 'https://accounts.spotify.com/api/token',
   };
 
-  // Redirect URI usando o scheme do seu app
+  // // Redirect URI usando o scheme do seu app
   const redirectUri = AuthSession.makeRedirectUri({
     scheme: 'spaceify',
   });
@@ -124,6 +124,9 @@ export const SpotifyAuthProvider = ({ children }: { children: React.ReactNode })
         },
       });
 
+      const result = await response.text(); 
+      console.log('Resposta da API /me:', result);
+
       if (response.status === 401) {
         console.log('Token inválido ou expirado');
         return false;
@@ -144,71 +147,91 @@ export const SpotifyAuthProvider = ({ children }: { children: React.ReactNode })
   };
 
   const login = async () => {
-    try {
-      setIsLoading(true);
+  try {
+    setIsLoading(true);
 
-      console.log('Iniciando login do Spotify...');
-      console.log('Redirect URI:', redirectUri);
+    console.log('Iniciando login do Spotify...');
+    console.log('Redirect URI:', redirectUri);
 
-      const request = new AuthSession.AuthRequest({
-        clientId: CLIENT_ID,
-        scopes: [
-          'user-read-email',
-          'user-read-private',
-          'playlist-read-private',
-          'playlist-read-collaborative',
-          'user-library-read',
-          'user-top-read',
-          'streaming',
-          'user-read-playback-state',
-          'user-modify-playback-state'
-        ],
-        usePKCE: false,
-        responseType: AuthSession.ResponseType.Token,
-        redirectUri: redirectUri,
-        state: Math.random().toString(36).substring(7),
-      });
+    const request = new AuthSession.AuthRequest({
+      clientId: CLIENT_ID,
+      scopes: [
+        'user-read-email',
+        'user-read-private',
+        'playlist-read-private',
+        'playlist-read-collaborative',
+        'user-library-read',
+        'user-top-read',
+        'streaming',
+        'user-read-playback-state',
+        'user-modify-playback-state',
+        'playlist-modify-public',     
+        'playlist-modify-private'
+      ],
+      usePKCE: true,
+      responseType: AuthSession.ResponseType.Code,
+      redirectUri,
+      state: Math.random().toString(36).substring(7),
+    });
 
-      const result = await request.promptAsync(discovery);
+    await request.makeAuthUrlAsync(discovery); // Gera a URL antes de pedir autenticação
 
-      console.log('Resultado da autenticação:', result.type);
+    const result = await request.promptAsync(discovery);
 
-      if (result.type === 'success') {
-        const { access_token, expires_in } = result.params;
+    console.log('Resultado da autenticação:', result.type);
 
-        if (access_token) {
-          console.log('Token recebido com sucesso');
+    if (result.type === 'success' && result.params.code) {
+      const tokenResponse = await AuthSession.exchangeCodeAsync(
+        
+        {
+          clientId: CLIENT_ID,
+          code: result.params.code,
+          redirectUri,
+          extraParams: {
+            code_verifier: request.codeVerifier!,
+            show_dialog: 'true',
+          },
+        },
+        discovery,
+      );
 
-          // Salvar token
-          setToken(access_token);
-          await AsyncStorage.setItem('@spotify_token', access_token);
+      // const { access_token, expires_in } = tokenResponse;
+      const access_token = tokenResponse.accessToken;
+      const expires_in = tokenResponse.expiresIn;
 
-          // Salvar tempo de expiração
-          if (expires_in) {
-            const expirationTime = Date.now() + (parseInt(expires_in) * 1000);
-            await AsyncStorage.setItem('@spotify_token_expiration', expirationTime.toString());
-          }
 
-          // Buscar dados do usuário
-          await fetchUserData(access_token);
+      if (access_token) {
+        console.log('Token recebido com sucesso');
 
-          console.log('Login concluído com sucesso');
-        } else {
-          throw new Error('Token não recebido');
+        setToken(access_token);
+        await AsyncStorage.setItem('@spotify_token', access_token);
+
+        if (expires_in) {
+          const expirationTime = Date.now() + expires_in * 1000;
+          await AsyncStorage.setItem('@spotify_token_expiration', expirationTime.toString());
         }
-      } else if (result.type === 'error') {
-        console.error('Erro na autenticação:', result.error);
-        Alert.alert('Erro', 'Falha na autenticação com Spotify');
-      } else if (result.type === 'cancel') {
-        console.log('Login cancelado pelo usuário');
+
+        await fetchUserData(access_token);
+
+        console.log('Login concluído com sucesso');
+      } else {
+        throw new Error('Token não recebido após troca do código');
       }
-    } catch (error) {
-      console.error('Erro durante o login:', error);
-      Alert.alert('Erro', 'Ocorreu um erro durante o login');
-    } finally {
-      setIsLoading(false);
+
+    } else if (result.type === 'error') {
+      console.error('Erro na autenticação:', result.error);
+      Alert.alert('Erro', 'Falha na autenticação com Spotify');
+    } else if (result.type === 'cancel') {
+      console.log('Login cancelado pelo usuário');
     }
-  };
+  } catch (error) {
+    console.error('Erro durante o login:', error);
+    Alert.alert('Erro', 'Ocorreu um erro durante o login');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const fetchUserData = async (accessToken: string) => {
     try {
