@@ -3,7 +3,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Phosphor from "phosphor-react-native";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../../context/ThemeContext/ThemeContext";
 import {
   RocketIcon,
   AlienIcon,
