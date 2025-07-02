@@ -72,7 +72,12 @@ export default function MoodsScreen() {
                 label={label}
                 colors={["#5f2c82", "#49a09d"]}
                 BlobComponent={BlobComponent}
-                onPress={() => navigation.navigate("ImagemDetalhes", { item })}
+                onPress={() =>
+                  navigation.navigate("ImagemDetalhes", {
+                    item,
+                    categoria: "espacial", 
+                  })
+                }
               />
             </View>
           );

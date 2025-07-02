@@ -26,34 +26,34 @@ const FAVORITO_KEY = '@imagens_favoritas';
 
 export default function ImagemDetalhes() {
   const route = useRoute();
-  const { item } = route.params as { item: ImageData };
+  const { item, categoria } = (route.params ?? {}) as { item?: ImageData; categoria?: string };
 
   const [data, setData] = useState<ImageData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [favorito, setFavorito] = useState(false);
 
-  // Carrega os dados vindos do botão (item)
+  // Segurança caso não tenha recebido item
   useEffect(() => {
-    if (item) {
-      const imageUrl = item.hdurl ?? item.url ?? item.thumbnail_url ?? null;
-      if (!imageUrl) {
-        setError('URL da imagem não encontrada.');
-        setLoading(false);
-        return;
-      }
-      setData({
-        url: imageUrl,
-        title: item.title,
-        explanation: item.explanation,
-        date: item.date,
-        media_type: item.media_type,
-      });
+    if (!item) {
+      setError('Nenhuma imagem foi passada para a tela.');
       setLoading(false);
-    } else {
-      setError('Nenhuma imagem foi passada.');
-      setLoading(false);
+      return;
     }
+    const imageUrl = item.hdurl ?? item.url ?? item.thumbnail_url ?? null;
+    if (!imageUrl) {
+      setError('URL da imagem não encontrada.');
+      setLoading(false);
+      return;
+    }
+    setData({
+      url: imageUrl,
+      title: item.title,
+      explanation: item.explanation,
+      date: item.date,
+      media_type: item.media_type,
+    });
+    setLoading(false);
   }, [item]);
 
   // Verifica se está favoritada
@@ -62,7 +62,7 @@ export default function ImagemDetalhes() {
       if (!data) return;
       const salvo = await AsyncStorage.getItem(FAVORITO_KEY);
       const lista = salvo ? JSON.parse(salvo) : [];
-      const existe = lista.some((item: ImageData) => item.url === data.url);
+      const existe = lista.some((favItem: ImageData) => favItem.url === data.url);
       setFavorito(existe);
     }
     checkFavorito();
@@ -73,10 +73,10 @@ export default function ImagemDetalhes() {
     if (!data) return;
     const salvo = await AsyncStorage.getItem(FAVORITO_KEY);
     let lista = salvo ? JSON.parse(salvo) : [];
-    const existe = lista.find((item: ImageData) => item.url === data.url);
+    const existe = lista.find((favItem: ImageData) => favItem.url === data.url);
 
     if (existe) {
-      lista = lista.filter((item: ImageData) => item.url !== data.url);
+      lista = lista.filter((favItem: ImageData) => favItem.url !== data.url);
       setFavorito(false);
     } else {
       lista.push(data);
@@ -157,7 +157,7 @@ export default function ImagemDetalhes() {
           </AnimatedReanimated.View>
 
           <SpotifyButton
-            mood={'espacial'}
+            mood={categoria ?? 'default'}
             imageTitle={data.title}
           />
 
