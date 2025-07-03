@@ -34,9 +34,6 @@ export const BottomTabsNavigator = () => {
             case 'Profile':
               iconName = 'user';
               break;
-            case 'ImagemDetalhes':
-              iconName = 'image';
-              break;
             default:
               iconName = 'circle';
           }
@@ -60,7 +57,7 @@ export const BottomTabsNavigator = () => {
       <Tab.Screen name="Playlist" component={PlaylistsScreen} />
       <Tab.Screen name="Moods" component={MoodsScreen} />
       <Tab.Screen name="Profile" component={Profile} />
-      <Tab.Screen name="ImagemDetalhes" component={ImagemDetalhes} />
+      
     </Tab.Navigator>
   );
 };

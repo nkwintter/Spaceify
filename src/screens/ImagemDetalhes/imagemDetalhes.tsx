@@ -21,7 +21,7 @@ import ButtonBackCateg from '../../components/ButtonBackCateg/ButtonBackCateg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { localStyles } from './imagemDetalhesStyle';
 import { ImageData } from '../../types/types';
-import BottomNav from '../../components/BottomNav';
+
 
 const FAVORITO_KEY = '@imagens_favoritas';
 
@@ -163,7 +163,6 @@ export default function ImagemDetalhes() {
             setFavorito={toggleFavorito}
           />
         </ScrollView>
-        <BottomNav/>
       </SafeAreaView>
     </LinearGradient>
   );
