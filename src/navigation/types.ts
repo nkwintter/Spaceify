@@ -1,7 +1,7 @@
 export type RootStackParamList = {
-  Home: undefined;
+  Home: any;
   Moods: undefined;
   Playlist: undefined;
-  Details: undefined;
+  Details: { item: ImageData; categoria: string }; 
   Profile: undefined;
 };

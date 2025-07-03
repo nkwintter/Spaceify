@@ -17,7 +17,9 @@
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
-    "types": ["react-native-svg", "node"]
+
+    "types": ["node"]
+
   },
   "include": [
     "**/*.ts",
