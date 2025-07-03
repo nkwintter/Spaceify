@@ -1,3 +1,4 @@
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SpotifyAuthProvider } from './src/context/SpotifyAuthContext';
@@ -16,10 +17,11 @@ import { PlaylistsScreen } from './src/screens/playlistScreen';
 import MoodsScreen from './src/screens/MoodsScreen';
 import { BottomTabsNavigator } from './src/navigation/BottomTabsNavigator';
 
+
 const Stack = createNativeStackNavigator();
 
-
 export default function App() {
+
 
   return (
     // LIMPAR ASYNCSTORAGE:
@@ -51,6 +53,7 @@ export default function App() {
     </ThemeProvider> 
   );
 }
+
 
 
 

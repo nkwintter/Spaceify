@@ -1,3 +1,4 @@
+
 // // src/components/BottomNav.tsx
 // import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 // import { useTheme } from "../context/ThemeContext";
@@ -8,6 +9,7 @@
 //   FlyingSaucerIcon,
 // } from "phosphor-react-native";
 // import { useNavigation, useRoute } from "@react-navigation/native";
+
 
 // const icons = {
 //   rocket: RocketIcon,

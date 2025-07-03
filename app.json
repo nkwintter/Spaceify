@@ -30,7 +30,6 @@
     "plugins": [
      "expo-web-browser",
      "expo-font"
-
     ]
   }
 }

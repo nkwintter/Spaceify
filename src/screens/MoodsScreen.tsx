@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -12,7 +13,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { fetchApodList } from "../services/nasaApiService";
 import BlobButton from "../components/BlobButton";
-
 import Blob01 from "../assets/blob01.svg";
 import Blob02 from "../assets/blob02.svg";
 import Blob03 from "../assets/blob03.svg";
@@ -24,7 +24,7 @@ import Blob08 from "../assets/blob08.svg";
 import Blob09 from "../assets/blob09.svg";
 import Blob10 from "../assets/blob10.svg";
 import { RootStackParamList } from "../navigation/types";
-import BottomNav from "../components/BottomNav";
+
 
 
 
@@ -47,8 +47,10 @@ const categorias = [
   "andromeda",
 ];
 
+
 // Tipagem do navigation para esta tela
 type MoodsScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Moods'>;
+
 
 export default function MoodsScreen() {
   const navigation = useNavigation<MoodsScreenNavigationProp>();
@@ -120,7 +122,9 @@ export default function MoodsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
+
         <Text style={styles.title}>Categoria: {categoriaSelecionada}</Text>
+
         <Text
           style={{ color: "white", marginVertical: 6, textAlign: "center" }}
           onPress={() => setCategoriaSelecionada(null)}
@@ -129,6 +133,7 @@ export default function MoodsScreen() {
         </Text>
       </View>
       <ScrollView contentContainerStyle={styles.blobContainer}>
+
         {filtrados.length === 0 ? (
           <Text style={{ color: "white", textAlign: "center" }}>
             Nenhuma imagem encontrada para essa categoria.
@@ -154,6 +159,7 @@ export default function MoodsScreen() {
           })
         )}
         {categorias.map((label, index) => {
+
           const BlobComponent = blobComponents[index % blobComponents.length];
           return (
             <View style={styles.blobWrapper} key={label}>
@@ -166,7 +172,7 @@ export default function MoodsScreen() {
           );
         })}
       </ScrollView>
-      <BottomNav />
+
     </SafeAreaView>
   );
 }
@@ -174,7 +180,9 @@ export default function MoodsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+
     backgroundColor: "#000",
+
   },
   header: {
     alignItems: "center",
@@ -189,11 +197,14 @@ const styles = StyleSheet.create({
   },
   blobContainer: {
     alignItems: "center",
+
     paddingBottom: 80,
+
   },
   blobWrapper: {
     marginVertical: 10,
   },
+
   loadingContainer: {
     flex: 1,
     backgroundColor: "#000",
@@ -205,4 +216,5 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 16,
   },
+
 });
